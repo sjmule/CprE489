@@ -1,0 +1,49 @@
+Scott Mueller
+
+In this lab we learned how to look at traffic on a network.
+
+tcpdump
+1) The packets are coming from co2048-17.ece.iastate.edu(192.168.254.17)
+
+2) The option to view each packet in hex and ASCII is -X
+
+3) The gateway filter can also be used with tcpdump
+
+tcptrace
+4) a) There are 24 TCP connections, only 9 are visible on the tcptrace page
+	of those 9, all of them had a source of co2048-10.ece.iastate.edu(127.0.0.1).
+	The connected on ports 57600, 53793, 57602, 57603, 57604, 57605, 57606, 45767, and 45768.
+	The destinations were 209.56.124.25:emwavemsg, 119.145.14.135:emwavemsg and 8.37.235.27:emwavemsg.
+b) The connections lasted for anywhere from 5.5seconds, 11.5seconds, or 12.5seconds on average.
+c) In each case, 142, 5, 98, 53, 109, 125, 49, 4, and 7 packets were sent.
+
+d) The avg owin to each server is 43 bytes, 1 bytes, 55 bytes, 61 bytes, 44 bytes, 34 bytes, 90 bytes, 1 bytes, and 55 bytes.
+	The wavg owin to each server is 25 bytes, 0 bytes, 1 bytes, 1 bytes, 10 bytes, 18 bytes, 1 bytes, 0 bytes, and 1 bytes.
+
+5)
+
+Wireshark
+6) a) Each ICMP packet contains about 98 bytes of data.
+b) The hex values in the data feild are the same for each packet except for the same few feilds that change with each packet.
+c) The time between each ping request packet looks to be about 1 second.
+d) The sender was not exploiting any super user permissions since the value between each ping was left at the default.
+
+7) a) Some other protocols besides TCP are ARP, DNS, and NFS.
+b) TCP packets can be much larger, while some are only about 300 bytes or less, a large amount are upwards of a few thousand bytes in size.
+UDP packets tend to only be about a few hundred bytes in size and not ever above 400 bytes.
+The UDP headers are 40 bytes in size while the TCP headers are 32 bytes in size.
+c) My two most common ranges of packet lengths are 1280-2559 and 40-79.
+
+8) a)traceroute sends UDP and TCP packets
+b) tcptraceroute sends only TCP packets
+
+9) telnet command not found
+
+
+
+
+
+
+
+
+
