@@ -7,3 +7,9 @@ Hmwk2Client: Hmwk2Client.c
 
 Hmwk2Server: Hmwk2Server.c
 	gcc -o server.o Hmwk2Server.c -w
+	
+touch client.o:
+touch server.o:
+
+clean client.o
+clean server.o
