@@ -1,0 +1,12 @@
+Increasing the loss rate decreases the video quality because less data is getting to the destination and therefore less of the video can be displayed.
+
+While TCP would help decrease loss rate since the protocol would allow for re-transmission of loss packets,
+the result would be an increase in transmission time when packets need to be re-transmitted.
+
+I would not use this for multimedia communication if the desire is to stream the
+media in realtime and not worry about delay.
+TCP would also require more overhead to set up the connection and stream data resulting in increased network load.
+
+To run my program, you must compile it using gcc then pass in as command line arguments the source IP,
+the source port, the destination IP, the destination port, and the loss rate.
+The program will display for you the settings you select so you know what they are.

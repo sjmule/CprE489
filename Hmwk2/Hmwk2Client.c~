@@ -18,7 +18,7 @@ int main(int args, char** argv)
 	int acks = 0;
 	int i = 0;
 	int N = 100;
-	double throughput[100];
+	double throughput[25];
 	char packet[1472];
 	char ackBuff[256];
 	socklen_t ServAddrLen;

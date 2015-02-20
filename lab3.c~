@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 
 //generate random number, if < packet loss, don't send packet
-//source port 54809 destination port 54810
+//source port 44444 destination port 33333
 struct sockaddr_in SourceAddr, DestinationAddr;
 
 int main(int args, char** argv)
@@ -40,12 +40,12 @@ int main(int args, char** argv)
 	//Open the sockets for the source and destination, bind the source address
 	fdS = socket(AF_INET, SOCK_DGRAM, 0);
 	fdD = socket(AF_INET, SOCK_DGRAM, 0);
-	bind(fdS, &SourceAddr, SourceAddrLen);
+	bind(fdS, (struct sockaddr*)&SourceAddr, SourceAddrLen);
 
 	for(;;)
 	{
 		//receive and store a packet from the source
-		n = recvfrom(fdS, buff, 2048, 0, &SourceAddr, &SourceAddrLen);
+		n = recvfrom(fdS, buff, sizeof(buff), 0, (struct sockaddr*) &SourceAddr, &SourceAddrLen);
 		
 		printf("%d ", n);
 		//generate a random value 0-100
@@ -54,11 +54,11 @@ int main(int args, char** argv)
 		//printf("%d ", random);
 		//check if the random value is less than the loss rate, if it is, don't send the packet, if it is not, send the packet
 		//if(random <= lossRate);
-			//continue;
+		//	continue;
 		//else
 		//{
 			//send the packet to the destination
-			sendto(fdD, buff, n, 0, &DestinationAddr, DestAddrLen);
+			sendto(fdD, buff, n, 0, (struct sockaddr*)&DestinationAddr, DestAddrLen);
 		//}
 	}
 	return 0;
