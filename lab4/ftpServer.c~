@@ -1,0 +1,35 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+struct sockaddr_in ServAddrCommand, ClientAddrCommand, ServAddrData, ClientAddrData;
+
+int main(int args, char** argv)
+{
+	int s, commandSock, ClientAddrCommandLen, ClientAddrDataLen;
+	socklen_t ServAddrCommandLen;
+	socklen_t ServAddrDataLen;	
+	
+	ServAddrCommand.sin_family = AF_INET;
+	ServAddrCommand.sin_port = htons(54809);
+	ServAddrCommand.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServAddrCommandLen = sizeof(ServAddrCommand);
+
+	ServAddrData.sin_family = AF_INET;
+	ServAddrData.sin_port = htons(54810);
+	ServAddrData.sin_addr.s_addr = inet_addr("127.0.0.1");
+	ServAddrDataLen = sizeof(ServAddrData);
+	
+	commandSocket = socket(AF_INET, SOCK_STREAM, 0);
+	bind(commandSock, (struct sockaddr*)&ServAddrCommand, ServAddrCommandLen);
+	listen(commandSock, 2);
+	for(;;)
+	{
+		s = accept(commandSocket, (struct sockaddr*)&ClientCommandAddr, &ClientAddrCommandLen);
+		
+	}
+	return 0;
+}

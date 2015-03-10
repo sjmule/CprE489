@@ -1,0 +1,9 @@
+dir.txt
+file.txt
+ftpClient.c
+ftpClient.c~
+ftpClient.o
+ftpServer.c
+ftpServer.c~
+ftpServer.o
+makefile

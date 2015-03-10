@@ -12,6 +12,8 @@
 
 struct sockaddr_in ServAddr, ClientAddr;
 
+//Enter server IP as command line argument
+ 
 int main(int args, char** argv)
 {
 	int fd, n;
@@ -31,8 +33,6 @@ int main(int args, char** argv)
 	strcat(str, argv[1]);
 	strcat(str, pingingEnd);
 	system(str);
-	
-	printf("I pinged\n");
 	
 	//Get the results of the ping
 	char* avgS;
@@ -58,6 +58,7 @@ int main(int args, char** argv)
 	
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
 	
+	//Create the junk to fill our packet
 	char junk[1469];
 	int j = 0;
 	for(j; j<1469; j++)
@@ -77,9 +78,13 @@ int main(int args, char** argv)
 		double through = 0;
 		double top = 0;
 		double bottom = 0;
+		
+		//get the start time for the transmission
 		gettimeofday(&tv, NULL);
 		starttime = tv.tv_usec;
 		start = (double) starttime;
+	
+		//Start transmitting
 		for(i=0; i<N; i++){
 			sprintf(packet, "%d ", i);
 			strcat(packet, junk);
@@ -87,21 +92,30 @@ int main(int args, char** argv)
 			i++;
 		}
 		
+		//Get and count responses
 		if (( n = recvfrom(fd, ackBuff, sizeof(ackBuff), 0, (struct sockaddr*)&ServAddr, ServAddrLen)) != -1 ) {
 			ack++;
 		}
+
+		//get time after receiving last acknowledgement
 		gettimeofday(&tv, NULL);
 		endtime = tv.tv_usec;
 		end = (double) endtime;
+		
+		//Calculate throughput
 		top = (ack*8*1518);
 		bottom = (end - start - avg);
 		through = top/bottom;
+		
+		//Save throughput of latest run to calculate changes against others later
 		throughput[k] = through;
 		k++;
 		N = N*2;
-		//calculate throughput change between previous rounds, how to do this was not made very clear, break when change <=.05
-		//throughput is an array of size 100, I'm sure if I knew how to calculate change between rounds exceeding the size of this array
-		//would not be a problem, but since I don't, don't run this program forever so it doesn't seg fault
+		/**
+		 * calculate throughput change between previous rounds, how to do this was not made very clear, break when change <=.05
+		 * throughput is an array of size 100, I'm sure if I knew how to calculate change between rounds exceeding the size of this array
+		 * would not be a problem, but since I don't, don't run this program forever so it doesn't seg fault
+		 */
 	}
 	
 	return 0;
