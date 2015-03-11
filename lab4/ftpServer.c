@@ -18,13 +18,13 @@ int main(int args, char** argv)
 	
 	//Configure struct for command port
 	ServAddrCommand.sin_family = AF_INET;
-	ServAddrCommand.sin_port = htons(54811);
+	ServAddrCommand.sin_port = htons(54819);
 	ServAddrCommand.sin_addr.s_addr = inet_addr("127.0.0.1");
 	ServAddrCommandLen = sizeof(ServAddrCommand);
 
 	//Configure struct for data port
 	ServAddrData.sin_family = AF_INET;
-	ServAddrData.sin_port = htons(54812);
+	ServAddrData.sin_port = htons(54820);
 	ServAddrData.sin_addr.s_addr = inet_addr("127.0.0.1");
 	ServAddrDataLen = sizeof(ServAddrData);
 	
@@ -54,20 +54,48 @@ int main(int args, char** argv)
 		}
 		if(strncmp(command, "LIST", 4) == 0)
 		{
+			//printf("Listing directory\n");
 			system("ls > dir.txt");
 			FILE *dir;
 			dir = fopen("dir.txt", "r");
-			char *str = malloc(1024 * sizeof(char));
-			size_t *t = NULL;
-			getline(&str, t, dir);
-			while(!feof(dir))
+			if(dir == 0)
 			{
-				write(s, str, sizeof(str));
+				perror("Cannot open second file");
+				exit(-1);
 			}
+			//printf("file is open\n");
+			char *str = malloc(2048 * sizeof(char));
+			int nread = 0;
+			nread = fread(str,1,2048,dir);
+			printf("%s", str);
+			write(dataSock, str, nread);
 			fclose(dir);
 			free(str);
+			close(dataSock);
+			close(s);
+		}
+		if(strncmp(command, "RET", 3) == 0)
+		{
+			char *token;
+			token = strtok(command, " ");
+			token = strtok(NULL, " ");
+			FILE *file;
+			file = fopen(token, "r");
+			char *line = malloc(2048 * sizeof(char));
+			int nread = 0;
+			nread = fread(line,1,2048,file);
+			while(nread > 0)
+			{
+				write(dataSock, line, nread);
+				nread = fread(line,1,2048,file);
+			}
+			fclose(file);
+			free(line);
+			close(dataSock);
+			close(s);
 		}
 	}
 
+	close(commandSock);
 	return 0;
 }

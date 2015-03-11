@@ -1,9 +1,9 @@
 dir.txt
 file.txt
+ftpClient
 ftpClient.c
 ftpClient.c~
-ftpClient.o
+ftpServer
 ftpServer.c
 ftpServer.c~
-ftpServer.o
 makefile

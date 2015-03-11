@@ -12,17 +12,17 @@ int main(int args, char** argv)
 	int dataSock, commandSock, n, s, ServAddrDataTwoLen;
 	socklen_t ServAddrCommandLen;
 	socklen_t ServAddrDataLen;
-	char *listResults = malloc(1024 * sizeof(char));
+	char *listResults = malloc(2048 * sizeof(char));
 
 	//Configure struct for command port
 	ServAddrCommand.sin_family = AF_INET;
-	ServAddrCommand.sin_port = htons(54811);
+	ServAddrCommand.sin_port = htons(54819);
 	ServAddrCommand.sin_addr.s_addr = inet_addr(argv[1]);
 	ServAddrCommandLen = sizeof(ServAddrCommand);
 	
 	//Configure struct for data port
 	ServAddrData.sin_family = AF_INET;
-	ServAddrData.sin_port = htons(54812);
+	ServAddrData.sin_port = htons(54820);
 	ServAddrData.sin_addr.s_addr = inet_addr(argv[1]);
 	ServAddrDataLen = sizeof(ServAddrData);
 	
@@ -40,31 +40,26 @@ int main(int args, char** argv)
 	s = accept(dataSock, (struct sockaddr*)&ServAddrDataTwo, &ServAddrDataTwoLen);
 	printf("Connection established\n");
 	
-	write(commandSock, "LIST", 4);
+	write(commandSock, "RET dir.txt", 11);
 
-	n = read(commandSock, listResults, 1024);
+	printf("command sent\n");
+	n = read(s, listResults, 2048);
+	//printf("%s", listResults);
+
+	FILE *file;
+	file = fopen("dir1.txt", "w");
 	while(n>0)
 	{
-		printf("%s", listResults);
+		fprintf(file, "%s", listResults);
 	}
 
 	write(commandSock, "quit", 4);
 
 	free(listResults);
 
-	/*
-	char *command = malloc(80 * sizeof(char));
-	for(;;)
-	{
-		scanf("%s", command);
-		write (commandSock, command, strlen(command));
-		if(strncmp(command, "quit", 4)==0)
-		{
-			printf("Exiting\n");
-			break;
-		}
-	}
-	*/
+	close(s);
+	close(dataSock);
+	close(commandSock);
 
 	return 0;
 }
