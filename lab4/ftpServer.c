@@ -6,27 +6,22 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-struct sockaddr_in ServAddrCommand, ClientAddrCommand, ServAddrData, ClientAddrData;
+struct sockaddr_in ServAddrCommand, ClientAddrCommand, ServAddrPort1, ServAddrPort2;
 
 int main(int args, char** argv)
 {
-	int s, n, commandSock, dataSock, ClientAddrCommandLen, ClientAddrDataLen;
+	int s, n, commandSock, port1Sock, port2Sock, ClientAddrCommandLen;
 	socklen_t ServAddrCommandLen;
-	socklen_t ServAddrDataLen;
+	socklen_t ServAddrPort1Len;
+	socklen_t ServAddrPort2Len;
 	char *command = malloc(80 * sizeof(char));
 	size_t commandLine = 80;
 	
 	//Configure struct for command port
 	ServAddrCommand.sin_family = AF_INET;
-	ServAddrCommand.sin_port = htons(54819);
+	ServAddrCommand.sin_port = htons(54840);
 	ServAddrCommand.sin_addr.s_addr = inet_addr("127.0.0.1");
 	ServAddrCommandLen = sizeof(ServAddrCommand);
-
-	//Configure struct for data port
-	ServAddrData.sin_family = AF_INET;
-	ServAddrData.sin_port = htons(54820);
-	ServAddrData.sin_addr.s_addr = inet_addr("127.0.0.1");
-	ServAddrDataLen = sizeof(ServAddrData);
 	
 	//Bind the command port
 	commandSock = socket(AF_INET, SOCK_STREAM, 0);
@@ -35,11 +30,6 @@ int main(int args, char** argv)
 	//Listen on the command port
 	listen(commandSock, 2);
 	s = accept(commandSock, (struct sockaddr*)&ClientAddrCommand, &ClientAddrCommandLen);
-	printf("Connection established\n");
-
-	//Connect on the data port
-	dataSock = socket(AF_INET, SOCK_STREAM, 0);
-	connect(dataSock, (struct sockaddr*)&ServAddrData, ServAddrDataLen);
 	printf("Connection established\n");
 	
 	for(;;)
@@ -54,7 +44,23 @@ int main(int args, char** argv)
 		}
 		if(strncmp(command, "LIST", 4) == 0)
 		{
-			//printf("Listing directory\n");
+			char *new_port1;
+			new_port1 = strtok(command, " ");
+			new_port1 = strtok(NULL, " ");
+			command = "";
+			
+			//Create new sockaddr struct to use on new port
+			ServAddrPort1.sin_family = AF_INET;
+			ServAddrPort1.sin_port = htons(atoi(new_port1));
+			ServAddrPort1.sin_addr.s_addr = inet_addr("127.0.0.1");
+			ServAddrPort1Len = sizeof(ServAddrPort1);
+
+			//Create new socket and connect on new port
+			port1Sock = socket(AF_INET, SOCK_STREAM, 0);
+			connect(port1Sock, (struct sockaddr*)&ServAddrPort1, ServAddrPort1Len);
+
+			//List the directory
+			printf("Listing directory\n");
 			system("ls > dir.txt");
 			FILE *dir;
 			dir = fopen("dir.txt", "r");
@@ -63,39 +69,62 @@ int main(int args, char** argv)
 				perror("Cannot open second file");
 				exit(-1);
 			}
-			//printf("file is open\n");
+			
+			//Send the directory
 			char *str = malloc(2048 * sizeof(char));
 			int nread = 0;
 			nread = fread(str,1,2048,dir);
 			printf("%s", str);
-			write(dataSock, str, nread);
+			write(port1Sock, str, nread);
 			fclose(dir);
 			free(str);
-			close(dataSock);
-			close(s);
+			close(port1Sock);
 		}
 		if(strncmp(command, "RET", 3) == 0)
 		{
-			char *token;
-			token = strtok(command, " ");
-			token = strtok(NULL, " ");
+			char *file_name;
+			char *new_port2;
+			file_name = strtok(command, " ");
+			file_name = strtok(NULL, " ");
+			new_port2 = strtok(NULL, " ");
+			command = "";
+			
+			//Create new sockaddr struct to use on new port
+			ServAddrPort2.sin_family = AF_INET;
+			ServAddrPort2.sin_port = htons(atoi(new_port2));
+			ServAddrPort2.sin_addr.s_addr = inet_addr("127.0.0.1");
+			ServAddrPort2Len = sizeof(ServAddrPort2);
+
+			//Create new socket and connect on new port
+			port2Sock = socket(AF_INET, SOCK_STREAM, 0);
+			connect(port2Sock, (struct sockaddr*)&ServAddrPort2, ServAddrPort2Len);
+
+			//Open file to read and send
 			FILE *file;
-			file = fopen(token, "r");
+			file = fopen(file_name, "r");
+			if(file == 0)
+			{
+				perror("Cannot open second file");
+				exit(-1);
+			}
+
+			//send the file
 			char *line = malloc(2048 * sizeof(char));
 			int nread = 0;
 			nread = fread(line,1,2048,file);
 			while(nread > 0)
 			{
-				write(dataSock, line, nread);
+				write(port2Sock, line, nread);
 				nread = fread(line,1,2048,file);
 			}
 			fclose(file);
 			free(line);
-			close(dataSock);
-			close(s);
+			free(file_name);
+			free(new_port2);
+			close(port2Sock);
 		}
 	}
-
+	close(s);
 	close(commandSock);
 	return 0;
 }

@@ -1,0 +1,7 @@
+In this lab I learned more about how servers work when using the TCP protocol.
+The programs need to create sockets similar to when using UDP, but when they want to send data they need to 
+bind, listen, and accept on the server side to receive connections from clients.
+Clients need to create a socket, then use connect to be able to send data to and from a server.
+
+File transfer can be done by opening a file on the server end, reading out lines from the file, then writing it to the socket to the client,
+and then writing the lines received by reading on the socket and writing the lines to a file and saving it.

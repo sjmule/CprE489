@@ -1,6 +1,6 @@
+dir1.txt
 dir.txt
 file.txt
-ftpClient
 ftpClient.c
 ftpClient.c~
 ftpServer

@@ -19,7 +19,7 @@ int main(int args, char** argv)
 
 	//Configure struct for command port
 	ServAddrCommand.sin_family = AF_INET;
-	ServAddrCommand.sin_port = htons(54838);
+	ServAddrCommand.sin_port = htons(54840);
 	ServAddrCommand.sin_addr.s_addr = inet_addr(argv[1]);
 	ServAddrCommandLen = sizeof(ServAddrCommand);
 
@@ -67,9 +67,24 @@ int main(int args, char** argv)
 	fgets(string1, 50, stdin);
 	strcpy(string2, string1);
 
+	//Get the port number
+	char *fileName;
+	fileName = strtok(string2, " ");
+	fileName = strtok(NULL, " ");
+
+	//Get the file name from the user input
 	char *new_port2;
-	new_port2 = strtok(string2, " ");
 	new_port2 = strtok(NULL, " ");
+	printf("%s %d\n", fileName, atoi(new_port2));
+
+	//Open the file new file
+	FILE *file;
+	file = fopen(fileName, "w");
+	if(file == 0)
+	{
+		perror("Cannot open second file");
+		exit(-1);
+	}
 
 	//Configure struct for new_port1
 	ServAddrPort2.sin_family = AF_INET;
@@ -88,14 +103,7 @@ int main(int args, char** argv)
 	d2 = accept(d2Sock, (struct sockaddr*)&ServAddrPort2, &ServAddrPort2Len);
 	printf("Connection established\n");
 
-	//Get the file name from the user input
-	char *fileName;
-	fileName = strtok(string1, " ");
-	fileName = strtok(NULL, " ");
-
-	//Open the file and write the data from the server to it
-	FILE *file;
-	file = fopen(fileName, "w");
+	//Read and write file data
 	n = read(d2Sock, readResults, 2048);
 	while(n>0)
 	{
