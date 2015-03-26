@@ -1,0 +1,7 @@
+
+
+Network performance will probably degrade if all workspaces are running.
+
+The download time would go up, the TCP retransmission would go up.
+
+This is not stable, I can't tell since the retransmission stat never shows anything.
