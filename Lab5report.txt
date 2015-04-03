@@ -1,7 +1,18 @@
+In this lab we simulated a network using OpNet and ran some analysis on it.  We could see how download performance 
+of a file from a server was affected by various other things running on the network.
 
 
-Network performance will probably degrade if all workspaces are running.
+If we activate all workstations, network performance will probably degrade.
+It looks like it did.
 
-The download time would go up, the TCP retransmission would go up.
+If we increase the downloaded file size, the download time would go up, the TCP retransmission would go up.
+The download time did go up, the TCP retransmission never showed anything.
 
-This is not stable, I can't tell since the retransmission stat never shows anything.
+If we increase the background load to 10Mbps, the network is not stable.
+ I can't tell by what I should decrease the backgroun load by since the retransmission stat never shows anything.
+
+ Statistic		 | Single workstation | All workstations | Increased FTP File size | 5Mbps Background | 10Mbps Background
+ Utilization --> | 	0.015			  |  0.0006			 |   0.003				   |  0.003			  |   0.003
+ Utilization <-- |  0 				  |  0.015 			 | 	 0.125				   |  0.125 		  |   0.1
+ FTP download    |  2.545			  |  2.36			 |	 4.3  				   |  4.25 			  | linear increase
+ TCP retrans 	 |  --				  |  --				 |   --   				   |  -- 			  |  --
