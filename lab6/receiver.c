@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <stdlib.h>
 #include <time.h>
 
 #define DEBUG 1
@@ -39,14 +39,21 @@ int main(int args, char** argv)
 	int ack_num = 0;
 	double probability;
 	socklen_t SenderAddrLen;
-	char* buff = malloc(8 * sizeof(char));
+	char* buff[10];
 	char* ack_pack = malloc(3 * sizeof(char));
 	
-	probability = atof(argv[1]);
+	if(args == 1)
+	{
+		probability = 0.001;
+	}
+	else
+	{
+		probability = atof(argv[1]);
+	}
 
 	//Configure struct for the sender
 	SenderAddr.sin_family = AF_INET;
-	SenderAddr.sin_port = htons(54838);
+	SenderAddr.sin_port = htons(54840);
 	SenderAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	SenderAddrLen = sizeof(SenderAddr);
 
@@ -63,7 +70,7 @@ int main(int args, char** argv)
 	int i = 0;
 	for(;;)
 	{
-		n = read(s, buff, 8);
+		n = read(s, buff, 10);
 		if(DEBUG) printf("%s\n", buff);
 		do_i_take = AddCongestion(probability);
 		if(do_i_take)
@@ -72,15 +79,16 @@ int main(int args, char** argv)
 		}
 		else
 		{
+			sleep(1);
 			sprintf(ack_pack, "%d\0", ack_num);
-			write(s, ack_pack, 3);
+			//write(s, ack_pack, sizeof(ack_pack));
 			ack_num++;
 		}
+
 	}
 
 	close(fd);
 	close(s);
-	free(buff);
 
 	return 0;
 }
