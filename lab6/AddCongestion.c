@@ -16,7 +16,7 @@ int AddCongestion (double p)
 {
 
 	int c;
-       	int seed;
+    int seed;
 	double r;
 	seed =  (int) time( NULL);
 

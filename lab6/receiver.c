@@ -13,28 +13,9 @@
 
 struct sockaddr_in SenderAddr, SenderAddr2;
 
-long M = RAND_MAX;
+int AddCongestion (double p);
 
-int AddCongestion (double p)
-{
-
-	int c;
-    int seed;
-	double r;
-	seed =  (int) time( NULL);
-
-	srandom(seed);
-
-	c = 0;
-
-	r = (double)random()/M;
-	if ( r < p)
-			c = 1;
-	
-	return (c);
-}
-
-int main(int args, char** argv)
+int main(int argc, char** argv)
 {
 	int fd, s, SenderAddr2Len, do_i_take;
 	int n = 0;
@@ -44,7 +25,7 @@ int main(int args, char** argv)
 	char* buff[10];
 	char* ack_pack = malloc(3 * sizeof(char));
 	
-	if(args == 1)
+	if(argc == 1)
 	{
 		probability = 0.001;
 	}
