@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "AddCongestion.h"
+
 long M = RAND_MAX;
 
 int AddCongestion (double p)

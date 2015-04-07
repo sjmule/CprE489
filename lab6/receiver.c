@@ -7,6 +7,8 @@
 #include <netinet/in.h>
 #include <time.h>
 
+#include "AddCongestion.h"
+
 #define DEBUG 1
 
 struct sockaddr_in SenderAddr, SenderAddr2;
