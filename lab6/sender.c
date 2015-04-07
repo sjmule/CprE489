@@ -41,7 +41,7 @@ int main(int args, char** argv)
 			sprintf(packet, "%d%s", seq_num, data);
 			if(DEBUG) printf("%s\n", packet);
 			write(fd, packet, sizeof(packet));
-			flush(fd);
+			//flush(fd);
 			seq_num++;
 		}
 		/*for(i = 0; i < 5; i++)

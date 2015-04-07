@@ -1,19 +1,20 @@
 EXES = receiver sender
 OBJS_RECEIVER = receiver.o AddCongestion.o
 OBJS_SENDER = sender.o
+CFLAGS = -w
 
 DEPS = AddCongestion.h
 
 all: $(EXES)
 
 receiver: $(OBJS_RECEIVER)
-	gcc -o $@ $^
+	gcc -o $@ $^ $(CFLAGS)
 
 sender: sender.c
-	gcc -o $@ $^
+	gcc -o $@ $^ $(CFLAGS)
 
 %.o: %.c $(DEPS)
-	gcc -o $@ $<
+	gcc -o $@ -c $<
 
 clean:
 	rm -rf $(EXES)
