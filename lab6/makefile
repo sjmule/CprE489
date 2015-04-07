@@ -10,7 +10,7 @@ receiver: $(OBJS_RECEIVER)
 	gcc -o $@ $^
 
 sender: sender.c
-	gcc -o 
+	gcc -o $@ $^
 
 %.o: %.c $(DEPS)
 	gcc -o $@ $<
