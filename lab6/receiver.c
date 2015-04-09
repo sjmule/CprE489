@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	int ack_num = 0;
 	double probability;
 	socklen_t SenderAddrLen;
-	char* buff[10];
+	char* buff[8];
 	char* ack_pack = malloc(3 * sizeof(char));
 	
 	if(argc == 1)
@@ -33,10 +33,10 @@ int main(int argc, char** argv)
 	{
 		probability = atof(argv[1]);
 	}
-
+	
 	//Configure struct for the sender
 	SenderAddr.sin_family = AF_INET;
-	SenderAddr.sin_port = htons(54840);
+	SenderAddr.sin_port = htons(54841);
 	SenderAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	SenderAddrLen = sizeof(SenderAddr);
 
@@ -53,10 +53,9 @@ int main(int argc, char** argv)
 	int i = 0;
 	for(;;)
 	{
-		n = read(s, buff, 10);
+		n = read(s, buff, 8);
 		if(DEBUG) printf("%s\n", buff);
-		do_i_take = AddCongestion(probability);
-		if(do_i_take)
+		if(AddCongestion(probability))
 		{
 			if(DEBUG) printf("nope\n");
 		}
@@ -64,7 +63,7 @@ int main(int argc, char** argv)
 		{
 			sleep(1);
 			sprintf(ack_pack, "%d\0", ack_num);
-			//write(s, ack_pack, sizeof(ack_pack));
+			write(s, ack_pack, sizeof(ack_pack));
 			ack_num++;
 		}
 

@@ -11,7 +11,7 @@ receiver: $(OBJS_RECEIVER)
 	gcc -o $@ $^ $(CFLAGS)
 
 sender: sender.c
-	gcc -o $@ $^ $(CFLAGS)
+	gcc -o $@ $^ $(CFLAGS) -lrt
 
 %.o: %.c $(DEPS)
 	gcc -o $@ -c $<
