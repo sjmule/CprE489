@@ -6,7 +6,7 @@
  * become ready for writing.
  */
 
-#inlcude <sys/time.h>
+#include <sys/time.h>
 
 /* assume sd is the data channel socket & STDIN_FILENO is the
  * standard input file descriptor (it is 0)

@@ -1,3 +1,6 @@
+#ifndef HEAD_H
+#define HEAD_H
+
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -11,15 +14,17 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <errno.h>
+#include <string.h>
 
 #define ReportError(msg)       {perror(msg); exit(-1);}
 
-long random(), M= 2147483647;
+long random();//, M= 2147483647;
 void srandom(unsigned);
 void IntroduceError(char*, double);
 char *GenerateData(int);
-int Server(), Client();
+int Server(int), Client(int);
 double floor(double);
 char linebuffer[100];
 
 
+#endif

@@ -3,7 +3,7 @@
 /* This routine establishes an active open connection.  That is, it creates  */
 /* a socket, and connects using it to a remote machine. The routine returns  */
 /* a file descriptor to be used to communicate with the remote machine.      */
-/* Make sure that you change the machine name from "vulcan" to that of   */
+/* Make sure that you change the machine name from "vulcan" to that of   	 */
 /* the remote machine.  Also, change the port number to a suitable port      */
 /* number as indicated in the project writeup.                               */
 /*                                                                           */
@@ -15,7 +15,7 @@ int Client()
 	int n;
 	int code;
 	FILE *fp;
-	char *otherhostname="vulcan", ch, thishostname[256];
+	char *otherhostname="localhost", ch, thishostname[256];
 
 	struct hostent *otherhost;
 	struct sockaddr_in otheraddr;
@@ -27,7 +27,7 @@ int Client()
 	bzero(&otheraddr, sizeof(otheraddr));
 
 	otheraddr.sin_family = AF_INET;
-	otheraddr.sin_port = htons(22222);
+	otheraddr.sin_port = htons(54841);
 	
 	s = socket(AF_INET, SOCK_STREAM, 0);
 
