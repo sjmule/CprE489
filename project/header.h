@@ -12,9 +12,11 @@
 #include <strings.h>
 #include <math.h>
 #include <unistd.h>
+#include <sys/wait.h>
 #include <sys/time.h>
 #include <errno.h>
 #include <string.h>
+#include <pthread.h>
 
 #define ReportError(msg)       {perror(msg); exit(-1);}
 

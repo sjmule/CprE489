@@ -1,9 +1,10 @@
-EXES=main
-OBJS = main3.o Server1.o Client1.o
+EXES = main
+OBJS = main4.o Server1.o Client1.o
 DEPS = header.h
+LIBRARIES = -lpthread
 
 main: $(OBJS)
-	gcc -o main3 $^
+	gcc -o main4 $^ $(LIBRARIES)
 
 %.o: %.c $(DEPS)
 	gcc -o $@ -c $<

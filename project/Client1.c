@@ -25,7 +25,7 @@ int Client(int port)
 	otherhost = gethostbyname(otherhostname);
 	bcopy(otherhost->h_addr_list[0], &otheraddr.sin_addr, otherhost->h_length);
 
-	n = connect(s, &otheraddr, sizeof(otheraddr));
+	while((n = connect(s, &otheraddr, sizeof(otheraddr))) != 0);
 
 	printf("Connected\n");
 
