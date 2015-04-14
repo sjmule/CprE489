@@ -20,8 +20,8 @@
 
 long random();//, M= 2147483647;
 void srandom(unsigned);
-void IntroduceError(char*, double);
-char *GenerateData(int);
+//void IntroduceError(char*, double);
+//char *GenerateData(int);
 int Server(int), Client(int);
 double floor(double);
 char linebuffer[100];

@@ -54,15 +54,17 @@ int main(int argc, char** argv)
 	for(;;)
 	{
 		n = read(s, buff, 8);
+		buff[n]="";
 		if(DEBUG) printf("%s\n", buff);
-		if(AddCongestion(probability))
+		if(AddCongestion(probability)==1)
 		{
 			if(DEBUG) printf("nope\n");
 		}
-		else
+		else if(AddCongestion(probability)==0)
 		{
 			sleep(1);
-			sprintf(ack_pack, "%d\0", ack_num);
+			sprintf(ack_pack, "%d", ack_num);
+			printf("%s\n", ack_pack);
 			write(s, ack_pack, sizeof(ack_pack));
 			ack_num++;
 		}

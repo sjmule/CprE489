@@ -39,16 +39,18 @@ int main(int args, char** argv)
 	for(;;)
 	{
 		int i = 0;
+		
+		 
 		for(i; i < 5; i++)
 		{
 			sprintf(packet, "%d%s", seq_num, data);
 			if(DEBUG) printf("%s\n", packet);
 			write(fd, packet, sizeof(packet));
-			if(i == 0)
+			/*if(i == 0)
 			{
 				timer_create(CLOCK_MONOTONIC, , timerid);
-			}
-			seq_num++;
+			}*/
+			//seq_num++;
 		}
 		for(i = 0; i < 5; i++)
 		{
