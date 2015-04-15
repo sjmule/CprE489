@@ -4,11 +4,12 @@ int main(int argc, char** argv)
 {
 	int server_port, client_port, server_fd, client_fd, n;
 	char node_id;
+	node_id = argv[1][0];
 	char *buffer = malloc(80 * sizeof(char));
 	size_t *t = 0;
 
-	printf("Please enter node id:\n");
-	scanf("%c", node_id);
+	//printf("Please enter node id:\n");
+	//scanf("%c", node_id);
 	if(DEBUG) printf("Node id: %c\n", node_id);
 	
 	printf("Please enter the port to run the server on:\n");
