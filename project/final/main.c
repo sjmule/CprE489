@@ -37,20 +37,36 @@ int main(int argc, char** argv)
 		if(node_id == 'a')
 		{
 			while((n = getline(&buffer, &t, stdin)) < 0);
-			write(client_fd, buffer, sizeof(buffer));
+			write(client_fd, buffer, n);
+			if(strncmp(buffer, "!!quit!!", 8) == 0)
+			{
+				break;
+			}
 		}
 		else if(node_id == 'b')
 		{
 			n = read(server_fd, buffer, 80);
 			printf("%s\n", buffer);
-			write(client_fd, buffer, sizeof(buffer));
+			write(client_fd, buffer, n);
+			if(strncmp(buffer, "!!quit!!", 8) == 0)
+			{
+				break;
+			}
 		}
 		else
 		{
 			n = read(server_fd, buffer, 80);
 			printf("%s\n", buffer);
+			if(strncmp(buffer, "!!quit!!", 8) == 0)
+			{
+				break;
+			}
 		}
 	}
+
+	free(buffer);
+	close(server_fd);
+	close(client_fd);
 
 	return 0;
 }
