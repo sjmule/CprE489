@@ -29,5 +29,7 @@ int Server(int port)
 
 	printf("Connected\n");
 
+	close(s);
+
 	return(fd);
 }

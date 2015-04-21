@@ -13,10 +13,9 @@ static struct argp_option options[] =
 	{"verbose", 'v', 0, 0, "Produce verbose output"},
 	{"quite", 'q', 0, 0, "Don't produce any output"},
 	{"silent", 's', 0, OPTION_ALIAS, 0},
-	{"node-id", 'i', "ID", 0, "Number to identify this workstation by, start indexing with 0"},
-	{"server-port", 'h', "PORT", 0, "The port number to host the server on"},
-	{"client-port", 'c', "PORT", 0, "The port number to connect to a server on"},
-	{"number", 'n', "NUMBER", 0, "Optional, specify number of workstations, default 3"},
+	{"node-id", 'n', "ID", 0, "Character to identify this workstation by: a, b, or c"},
+	{"server-port", 'h', "Port", 0, "The port number to host the server on"},
+	{"client-port", 'c', "Port", 0, "The port number to connect to a server on"},
 	{0}
 };
 
@@ -26,13 +25,11 @@ struct arguments
 	// are we in verbose mode?
 	int verbose_mode;
 	// the node id
-	int node_id;
+	char node_id;
 	// the server port address
 	int server_port;
 	// the client port address
 	int client_port;
-	// the number of workstations in the ring
-	int num_workstations;
 };
 
 /*
@@ -57,17 +54,14 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
 		case 's':
 			arguments->verbose_mode = 0;
 			break;
-		case 'i':
-			arguments->node_id = atoi(arg);
+		case 'n':
+			arguments->node_id = arg[0];
 			break;
 		case 'h':
 			arguments->server_port = atoi(arg);
 			break;
 		case 'c':
 			arguments->client_port = atoi(arg);
-			break;
-		case 'n':
-			arguments->num_workstations = atoi(arg);
 			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
@@ -93,8 +87,7 @@ int main(int argc, char** argv)
 	arguments.verbose_mode = 1;
 	arguments.server_port = 0;
 	arguments.client_port = 0;
-	arguments.node_id = -1;
-	arguments.num_workstations = 3;
+	arguments.node_id = '0';
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	int client_fd, n, er;
@@ -108,38 +101,30 @@ int main(int argc, char** argv)
 	size_t *t = 0;
 	size_t size = 0;
 
-	if(arguments.node_id == -1)
-	{
-		printf("Please specify a node id using \"-i #\"\n");
-		exit(-1);
-	}
-
 	if(arguments.server_port == 0)
 	{
-		arguments.server_port = 50980 + arguments.node_id;
+		printf("Please enter a port to run the server on using \"-h #####\"\n");
+		exit(-1);
 	}
 	if(arguments.client_port == 0)
 	{
-		if(arguments.node_id != (arguments.num_workstations-1))
-		{
-			arguments.client_port = 50981 + arguments.node_id;
-		}
-		else
-		{
-			arguments.client_port = 50980;
-		}
+		printf("Please enter a port to run the client on using \"-c #####\"\n");
+		exit(-1);
+	}
+	if(arguments.node_id == '0')
+	{
+		printf("Please specify a node id using \"-n \%c\" where \%c is either: a, b, or c\n");
+		exit(-1);
 	}
 
 	if(arguments.verbose_mode > 0)
 	{
-		printf("Expected number of workstations in ring: %d, if this is incorrect, please restart and specify a number of workstations using \"-n #\"\n", arguments.num_workstations);
-		printf("Node id: %d\n", arguments.node_id);
+		printf("Node id: %c\n", arguments.node_id);
 		printf("Running server on port: %d\n", arguments.server_port);
 		printf("Connecting to client on port: %d\n", arguments.client_port);
-		printf("If you would like to specify your own ports please set them with \"-h #####\" and \"-c #####\"\n");
 	}
 
-	if(arguments.node_id == (arguments.num_workstations-1))
+	if(arguments.node_id == 'c')
 	{
 		client_fd = Client(arguments.client_port);
 		server_fd = Server(arguments.server_port);
@@ -168,7 +153,7 @@ int main(int argc, char** argv)
 
 	for(;;)
 	{
-		if(arguments.node_id == 0)
+		if(arguments.node_id == 'a')
 		{
 			printf("When ready to enter a message please type in the destination node address (a,b,or c)\n");
 
@@ -187,7 +172,7 @@ int main(int argc, char** argv)
 				break;
 			}
 		}
-		else if((arguments.node_id > 0) && (arguments.node_id < (arguments.num_workstations-1)))
+		else if(arguments.node_id == 'b')
 		{
 			n = read(server_fd, buffer, 80);
 			printf("%s\n", buffer);
@@ -198,7 +183,7 @@ int main(int argc, char** argv)
 			}
 			memset(buffer, '\0', 80);
 		}
-		else if(arguments.node_id == (arguments.num_workstations-1))
+		else
 		{
 			n = read(server_fd, buffer, 80);
 			printf("%s\n", buffer);
@@ -210,9 +195,9 @@ int main(int argc, char** argv)
 		}
 	}
 
-	close(client_fd);
-	close(server_fd);
 	free(buffer);
+	close(server_fd);
+	close(client_fd);
 
 	return 0;
 }

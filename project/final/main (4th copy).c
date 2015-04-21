@@ -108,26 +108,20 @@ int main(int argc, char** argv)
 	size_t *t = 0;
 	size_t size = 0;
 
+	if(arguments.server_port == 0)
+	{
+		printf("Please enter a port to run the server on using \"-h #####\"\n");
+		exit(-1);
+	}
+	if(arguments.client_port == 0)
+	{
+		printf("Please enter a port to run the client on using \"-c #####\"\n");
+		exit(-1);
+	}
 	if(arguments.node_id == -1)
 	{
 		printf("Please specify a node id using \"-i #\"\n");
 		exit(-1);
-	}
-
-	if(arguments.server_port == 0)
-	{
-		arguments.server_port = 50980 + arguments.node_id;
-	}
-	if(arguments.client_port == 0)
-	{
-		if(arguments.node_id != (arguments.num_workstations-1))
-		{
-			arguments.client_port = 50981 + arguments.node_id;
-		}
-		else
-		{
-			arguments.client_port = 50980;
-		}
 	}
 
 	if(arguments.verbose_mode > 0)
@@ -136,7 +130,6 @@ int main(int argc, char** argv)
 		printf("Node id: %d\n", arguments.node_id);
 		printf("Running server on port: %d\n", arguments.server_port);
 		printf("Connecting to client on port: %d\n", arguments.client_port);
-		printf("If you would like to specify your own ports please set them with \"-h #####\" and \"-c #####\"\n");
 	}
 
 	if(arguments.node_id == (arguments.num_workstations-1))
@@ -210,9 +203,9 @@ int main(int argc, char** argv)
 		}
 	}
 
-	close(client_fd);
-	close(server_fd);
 	free(buffer);
+	close(server_fd);
+	close(client_fd);
 
 	return 0;
 }
