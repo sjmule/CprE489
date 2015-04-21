@@ -14,4 +14,6 @@ workstation.o: workstation1.c
 
 clean : 
 	touch workstation1.o;
+	touch workstation1;
 	rm workstation1.o
+	rm workstation1

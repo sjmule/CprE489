@@ -6,8 +6,10 @@
  * become ready for writing.
  */
 
-#include <sys/time.h>
+#include "header.h"
 
+int select(int sd)
+{
 /* assume sd is the data channel socket & STDIN_FILENO is the
  * standard input file descriptor (it is 0)
  */
@@ -16,33 +18,35 @@
 	fd_set rset;		/* declare an fd_set for read descriptors */
 	//...		
 
-	for (;;) {	/* endless loop, if you want continuous operation */
+	for (;;)
+	{	/* endless loop, if you want continuous operation */
 		FD_ZERO(&rset);		/* clear all bits in rset */
 		FD_SET(STDIN_FILENO, &rset);	/* set the standard input bit */
 		FD_SET(sd, &rset);	/* set the socket descriptor bit */
  		n = select((sd>STDIN_FILENO? sd:STDIN_FILENO)+1, &rset, NULL, NULL, NULL);
 		/* select blocks, and n is the number of ready descriptors */
-		if ( (n == -1 ) && (errno == EINTR) ) /* interruption */
+		if((n == -1 ) && (errno == EINTR)) /* interruption */
 		   continue;
-	  	if ((n== -1) {	/* error: you may handle it, if you want */
+	  	if((n== -1)
+	  	{	/* error: you may handle it, if you want */
 		 	/* code to handle errors */
 	  	}
 		/* after this point, handle the ready descriptor(s) */
 	  
 	  	/* check for ready data from the keyboard */
 
-	  	if (FD_ISSET(STDIN_FILENO, &rset)) {
+	  	if(FD_ISSET(STDIN_FILENO, &rset))
+	  	{
 			//... /* read data from the standard input*/
 			n--;
 	  	}
 	 
 	  	/* check for ready data from the communication channel */
 
-	  	if ((n > 0 ) && (FD_ISSET(sd, &rset)) ) {
+	  	if((n > 0 ) && (FD_ISSET(sd, &rset)))
+	  	{
 			/* socket is ready for reading */
 				//... /* read data from socket */
 	  	}
 	}
-	 	
-
-
+}

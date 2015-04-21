@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
+#include <semaphore.h>
 
 #define ReportError(msg)       {perror(msg); exit(-1);}
 #define DEBUG 1   //used for debugging, set to 1 to print debugging information
@@ -26,6 +27,7 @@ void srandom(unsigned);
 //void IntroduceError(char*, double);
 //char *GenerateData(int);
 int Server(int), Client(int);
+int select(int);
 double floor(double);
 char linebuffer[100];
 

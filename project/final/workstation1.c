@@ -28,7 +28,7 @@ void main(){
         i = fgetc(stdin);
         fgetc(stdin);
 
-        printf("When ready enter message of length 80 characters to send to node %c:",i);
+        printf("When ready enter message of length 72 characters to send to node %c:",i);
 
         er = getline(&text, &size, stdin);
         printf("er=%d\n",er);
@@ -37,13 +37,12 @@ void main(){
 	//sprintf(buffer,"%c%c%c%c%c%c%s%c%c", SYN,SYN,DLE,STX,destAddr,sourceAddr, text,DLE, ETX);
 	//printf("%s\n",buffer);
 
-	textBuffer = stuff(text);
+	//textBuffer = stuff(text);
 	
 }
 
 char* stuff(char * stuffme){
 	char * stuffed = NULL;
-	char * stuffedDone = malloc(sizeof(char)*80);
 	char text[150];
 	char i;
 	int h = 0;//for testing purposes
@@ -54,7 +53,7 @@ char* stuff(char * stuffme){
 	int cpySizeInt;
 	//takes in the text stuffs it then cuts it down to 72 characters
 	//printf("start of while loop h)%d\n",h);h++;
-	while(stuffme[stuffmeLoc] != '\0' || currentLoc == 80){//chaneg to a end delimiter
+	while(stuffme[stuffmeLoc] != '\0'){//chaneg to a end delimiter
 		//printf("appending single chars h)%d\n",h);h++;
 		text[currentLoc] = stuffme[stuffmeLoc];
 		
@@ -80,36 +79,28 @@ char* stuff(char * stuffme){
 		stuffmeLoc++;
 		currentLoc++;
 	}
-	/*if(currentLoc != 80){
-		text[currentLoc+1] = '\0';
-	}
-	else{text[80] = '\0';}*/
-	printf("                   stuffed: %s\n",text);
 	printf("%d\n",currentLoc);
-	if(currentLoc >= 80){
-		cpySize = sizeof(80*i);
-		cpySizeInt = 80;
-		printf("greater than 80\n");
+	if(currentLoc >= 72){
+		cpySize = sizeof(72*i);
+		cpySizeInt = 72;
 	}
 	else{
 		cpySize =strlen(text);
 		cpySizeInt = strlen(text);
-		printf("not greater than 80\n");
 	}
 	printf("%d\n",cpySizeInt);
 	//printf("copying 72 chars h)%d\n",h);h++;
-	/*for(k;k<cpySizeInt;k++){
+	//strncpy(stuffed,&text,cpySize);
+	for(k;k<cpySizeInt;k++){
 		stuffed[k]=text[k];
-	}*/
-	stuffed = text;
-	strncat(stuffedDone,stuffed,cpySizeInt);
+	}
 	//printf("print all data h)%d\n",h);h++;
-	printf("              not stuffed: %s\n",stuffme);
+	printf("               not stuffed: %s\n",stuffme);
 	//printf("printed stuffme h)%d\n",h);h++;
-	printf("                  stuffed: %s\n",text);
+	printf("                   stuffed: %s\n",text);
 	//printf("printed text h)%d\n",h);h++;
-	printf("stuffed and 80 characters: %s\n",stuffedDone);
-	//printf("print text 80 h)%d\n",h);h++;
+	printf("stuffed and 72 characters: %s\n",stuffed);
+	//printf("print text 72 h)%d\n",h);h++;
 	
 	return stuffed;
 	

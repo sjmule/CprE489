@@ -1,25 +1,12 @@
 #include "header.h"
 
-int server_fd, client_fd;
-
-void listener(void)
-{
-
-}
-
 int main(int argc, char** argv)
 {
-	int server_port, client_port, n, er;
-	int err = 0;
-	char DLE = 16;
-    char SYN = 22;
-    char STX = 2;
-    char ETX = 3;
-    char node_id, destAddr, sourceAddr, i;
+	int server_port, client_port, server_fd, client_fd, n;
+	char node_id;
+	node_id = argv[1][0];
 	char *buffer = malloc(80 * sizeof(char));
 	size_t *t = 0;
-	size_t size = 0;
-	node_id = argv[1][0];
 
 	//printf("Please enter node id:\n");
 	//scanf("%c", node_id);
@@ -45,38 +32,12 @@ int main(int argc, char** argv)
 		server_fd = Server(server_port);
 		client_fd = Client(client_port);
 	}
-
-	if(DEBUG) printf("Attempting to create socket listener thread\n");
-	pthread_t socket_listener;
-	err = pthread_create(&socket_listener, NULL, (void*)listener, NULL);
-	if(err != 0)
-	{
-		perror("pthread_create encountered an error");
-		exit(-1);
-	}
-	err = pthread_join(socket_listener, NULL);
-	if(err != 0)
-	{
-		perror("failed joining threads");
-		exit(-1);
-	}
-
 	for(;;)
 	{
 		if(node_id == 'a')
 		{
-			printf("When ready to enter a message please type in the destination node address (a,b,or c)\n");
-
-        	i = fgetc(stdin);
-        	fgetc(stdin);
-
-        	printf("When ready enter message of length 72 characters to send to node %c:",i);
-
-        	er = getline(&buffer, &size, stdin);
-        	printf("er=%d\n",er);
-        	printf("%s\n",buffer);
-
-        	write(client_fd, buffer, er);
+			while((n = getline(&buffer, &t, stdin)) < 0);
+			write(client_fd, buffer, n);
 			if(strncmp(buffer, "!!quit!!", 8) == 0)
 			{
 				break;
@@ -91,7 +52,6 @@ int main(int argc, char** argv)
 			{
 				break;
 			}
-			memset(buffer, '\0', 80);
 		}
 		else
 		{
@@ -101,7 +61,6 @@ int main(int argc, char** argv)
 			{
 				break;
 			}
-			memset(buffer, '\0', 80);
 		}
 	}
 
