@@ -147,7 +147,7 @@ int main(int argc, char** argv)
 		printf("Expected number of workstations in ring: %d, if this is incorrect, please restart and specify a number of workstations using \"-n #\"\n", arguments.num_workstations);
 		printf("Node id: %d\n", arguments.node_id);
 		printf("Running server on port: %d\n", arguments.server_port);
-		printf("Connecting to client on port: %d\n", arguments.client_port);
+		printf("Connecting to server %s as a client on port: %d\n", arguments.otherhostname, arguments.client_port);
 		printf("If you would like to specify your own ports please set them with \"-h #####\" and \"-c #####\"\n");
 	}
 
