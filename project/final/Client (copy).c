@@ -1,12 +1,12 @@
 #include "header.h"
 
-int Client(int port, char* otherhostname)
+int Client(int port)
 {
 	int s;
 	int n;
 	int code;
 	FILE *fp;
-	char ch, thishostname[256];
+	char *otherhostname="localhost", ch, thishostname[256];
 
 	struct hostent *otherhost;
 	struct sockaddr_in otheraddr;

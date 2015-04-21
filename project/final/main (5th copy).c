@@ -17,7 +17,6 @@ static struct argp_option options[] =
 	{"server-port", 'h', "PORT", 0, "The port number to host the server on"},
 	{"client-port", 'c', "PORT", 0, "The port number to connect to a server on"},
 	{"number", 'n', "NUMBER", 0, "Optional, specify number of workstations, default 3"},
-	{"server-name", 'H', "NAME", 0, "The name of the machine the server is running on"},
 	{0}
 };
 
@@ -34,8 +33,6 @@ struct arguments
 	int client_port;
 	// the number of workstations in the ring
 	int num_workstations;
-	// the name of the server
-	char* otherhostname;
 };
 
 /*
@@ -72,9 +69,6 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
 		case 'n':
 			arguments->num_workstations = atoi(arg);
 			break;
-		case 'H':
-			arguments->otherhostname = arg;
-			break;
 		default:
 			return ARGP_ERR_UNKNOWN;
 	}
@@ -101,7 +95,6 @@ int main(int argc, char** argv)
 	arguments.client_port = 0;
 	arguments.node_id = -1;
 	arguments.num_workstations = 3;
-	arguments.otherhostname = NULL;
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	int client_fd, n, er;
@@ -118,11 +111,6 @@ int main(int argc, char** argv)
 	if(arguments.node_id == -1)
 	{
 		printf("Please specify a node id using \"-i #\"\n");
-		exit(-1);
-	}
-	if(arguments.otherhostname == NULL)
-	{
-		printf("Please enter the name of the machine running the server using \"-H <name>\"\n");
 		exit(-1);
 	}
 
@@ -153,13 +141,13 @@ int main(int argc, char** argv)
 
 	if(arguments.node_id == (arguments.num_workstations-1))
 	{
-		client_fd = Client(arguments.client_port, arguments.otherhostname);
+		client_fd = Client(arguments.client_port);
 		server_fd = Server(arguments.server_port);
 	}
 	else
 	{
 		server_fd = Server(arguments.server_port);
-		client_fd = Client(arguments.client_port, arguments.otherhostname);
+		client_fd = Client(arguments.client_port);
 	}
 
 	if(arguments.verbose_mode == 2) printf("Attempting to create socket listener thread\n");

@@ -27,7 +27,7 @@ long random();//, M= 2147483647;
 void srandom(unsigned);
 //void IntroduceError(char*, double);
 //char *GenerateData(int);
-int Server(int), Client(int);
+int Server(int), Client(int, char*);
 //int select(int);
 double floor(double);
 char linebuffer[100];
