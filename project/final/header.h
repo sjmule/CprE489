@@ -23,6 +23,7 @@ extern char DLE;
 extern char SYN;
 extern char STX;
 extern char ETX;
+extern int DEBUG;
 
 int Server(int), Client(int);
 char* stuff(char*), destuff(char*);
