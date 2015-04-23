@@ -19,7 +19,7 @@ int main(int args, char** argv)
 
 	//Configure struct for command port
 	ServAddrCommand.sin_family = AF_INET;
-	ServAddrCommand.sin_port = htons(54838);
+	ServAddrCommand.sin_port = htons(54839);
 	ServAddrCommand.sin_addr.s_addr = inet_addr(argv[1]);
 	ServAddrCommandLen = sizeof(ServAddrCommand);
 

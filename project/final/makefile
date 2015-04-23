@@ -1,4 +1,4 @@
-EXES = main
+fEXES = main
 OBJS = main.o Server.o Client.o
 DEPS = header.h
 CFLAGS = -w

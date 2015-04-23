@@ -16,21 +16,15 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <string.h>
-#include <pthread.h>
-#include <semaphore.h>
 #include <argp.h>
+#include <poll.h>
 
-#define ReportError(msg)       {perror(msg); exit(-1);}
-#define DEBUG 1   //used for debugging, set to 1 to print debugging information
+extern char DLE;
+extern char SYN;
+extern char STX;
+extern char ETX;
 
-long random();//, M= 2147483647;
-void srandom(unsigned);
-//void IntroduceError(char*, double);
-//char *GenerateData(int);
 int Server(int), Client(int);
-//int select(int);
-double floor(double);
-char linebuffer[100];
-
+char* stuff(char*), destuff(char*);
 
 #endif
