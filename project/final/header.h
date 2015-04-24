@@ -18,11 +18,13 @@
 #include <string.h>
 #include <argp.h>
 #include <fcntl.h>
+#include <sys/select.h>
 
 extern char DEL;
 extern char SYN;
 extern char STX;
 extern char ETX;
+extern int DEBUG;
 
 int Server(int), Client(int);
 char* stuff(char*);

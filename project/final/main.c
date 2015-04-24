@@ -50,7 +50,7 @@ struct arguments
  *                 The state of the arg parser state machine
  * @return    0 if succesfully handeled the key, ARGP_ERR_UNKONWN if the key was uknown
  */
-error_t parse_opt(int key, char *arg, struct argp_state *state)
+error_t parse_opt(int key, char* arg, struct argp_state *state)
 {
 	struct arguments *arguments = state->input;
 	switch(key)
@@ -94,7 +94,6 @@ int main(int argc, char** argv)
 {
 	// Define defaults for the parser
 	struct arguments arguments;
-	struct data data;
 	arguments.verbose_mode = 1;
 	arguments.server_port = 0;
 	arguments.client_port = 0;
@@ -103,15 +102,20 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	DEBUG = arguments.verbose_mode;
 
-	int server_fd, client_fd, er, destAddr, rv, stdin_flags, fd_flags;
+	struct data data;
+
+	fd_set rfds;
+	struct timeval tv;
+
+	int server_fd, client_fd, er, n, destAddr, rv, stdin_flags, fd_flags, retval;
 	int err = 0;
 	int check = 0;
-    char i;
-	char *buffer = NULL;
-	char *textBuffer = NULL;
-	char *textBuffer2 = NULL;
-	char *text = NULL;
-	size_t *t = 0;
+    char i, j;
+	char* buffer = malloc(90 * sizeof(char));
+	char* textBuffer = NULL;
+	char* textBuffer2 = NULL;
+	char* text = NULL;
+	size_t* t = 0;
 	size_t size = 0;
 
 	// Verify the user has set a node id
@@ -169,53 +173,30 @@ int main(int argc, char** argv)
 		client_fd = Client(arguments.client_port);
 	}
 
-	stdin_flags = fcntl(stdin, F_GETFL);
-	stdin_flags |= O_NONBLOCK;
-	fcntl(stdin, F_SETFL, stdin_flags);
-
-	fd_flags = fcntl(server_fd, F_GETFL);
-	fd_flags |= O_NONBLOCK;
-	fcntl(server_fd, F_SETFL, fd_flags);
+	// Watch stdin and our socket
+	FD_ZERO(&rfds);
+	FD_SET(0, &rfds);
+	FD_SET(server_fd, &rfds);
 
 	for(;;)
 	{
-		int st = 0;
-		int fs = 0;
-		int n = 0;
-
 		printf("When ready to enter a message please type in the destination node address\n");
+		
+		n = select(3, &rfds, NULL, NULL, NULL);
 
-		while(1)
+		if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
-			if((n = read(stdin, buffer, 80)) < 1)
-			{
-				st = 1;
-				break;
-			}
-			if((n = read(server_fd, buffer, 90)) < 1)
-			{
-				fs = 1;
-				break;
-			}
-		}
-
-		if(st = 1)
-		{
-			destAddr = atoi(buffer[0]);
-			stdin_flags = fcntl(stdin, F_GETFL);
-			stdin_flags |= ~O_NONBLOCK;
-			fcntl(stdin, F_SETFL, stdin_flags);
+			i = fgetc(stdin);
+			j = fgetc(stdin);
+			destAddr = atoi(i);
 			printf("When ready enter message of length 80 characters to send to node %d:",destAddr);
 			read(stdin, textBuffer, 80);
 			textBuffer = stuff(textBuffer);
 			sprintf(textBuffer2,"%c&%c&%c&%c&%d&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer,DLE, ETX);
 			printf("%s\n", textBuffer2);
 			write(client_fd, textBuffer2, sizeof(textBuffer2));
-			stdin_flags = fcntl(stdin, F_GETFL);
-			stdin_flags |= O_NONBLOCK;
-			fcntl(stdin, F_SETFL, stdin_flags);
 		}
-		if(fs = 1)
+		else if((n > 0 ) && (FD_ISSET(server_fd, &rfds)))
 		{
 			data = deserialize(buffer);
 			if(data.dest == arguments.node_id)
@@ -228,7 +209,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		memset(buffer, '\0', sizeof(buffer));
+		memset(buffer, '\0', 90);
 		memset(textBuffer, '\0', sizeof(textBuffer));
 		memset(textBuffer2, '\0', sizeof(textBuffer2));
 		memset(data.text, '\0', sizeof(data.text));
