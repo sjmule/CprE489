@@ -4,6 +4,7 @@ char* stuff(char * stuffme){
 	char * stuffed = NULL;
 	char * stuffedDone = malloc(sizeof(char)*80);
 	char text[150];
+	char DLE = 'm';//change for tesing but should be dle = 16 
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
 	int stuffmeLoc = 0;
@@ -22,12 +23,6 @@ char* stuff(char * stuffme){
 		stuffmeLoc++;
 		currentLoc++;
 	}
-	/*if(currentLoc != 80){
-		text[currentLoc+1] = '\0';
-	}
-	else{text[80] = '\0';}*/
-	
-	//printf("%d\n",currentLoc);
 	
 	if(currentLoc >= 80){
 		cpySizeInt = 80;
@@ -37,15 +32,26 @@ char* stuff(char * stuffme){
 		cpySizeInt = strlen(text);
 		//printf("not greater than 80\n");
 	}
-	//printf("%d\n",cpySizeInt);
+	//printf("cpysizeint: %d\n",cpySizeInt);//cpySizeInt
 	
 	stuffed = text;
-	strncat(stuffedDone,stuffed,cpySizeInt);
+	strncat(stuffedDone,stuffed,currentLoc);
 	
 	//printf("              not stuffed: %s\n",stuffme);
 	//printf("                  stuffed: %s\n",text);
-	printf("stuffed and 80 characters: %s\n",stuffedDone);
+	//printf("stuffed and 80 characters at most: %s\n",stuffedDone);
 	
-	return stuffed;
+	return stuffedDone;
 	
+}
+
+char * trim(char *text){
+  int i = 0;
+  while(1){
+  	if(text[i] == '\n'){
+  		text[i]='\0';
+  		return text;
+  	}
+  	i++;
+  }
 }

@@ -1,8 +1,15 @@
 #include "header.h"
 
+struct data{
+	int dest;
+	int source;
+	char * text;
+};
+
 char* destuff(char * destuffme){
 	char * stuffed = NULL;
 	char text[150];
+	char DLE = 'm';//change for tesing but should be dle = 16
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
 	int destuffmeLoc = 0;
@@ -20,29 +27,55 @@ char* destuff(char * destuffme){
 		destuffmeLoc++;
 		currentLoc++;
 	}
-	/*if(currentLoc != 80){
+	text[currentLoc] ='\0';
+	if(currentLoc != 80){
 		text[currentLoc+1] = '\0';
 	}
-	else{text[80] = '\0';}*/
-	
-	//printf("%d\n",currentLoc);
-	
-	if(currentLoc >= 80){
-		cpySizeInt = 80;
-		//printf("greater than 80\n");
-	}
-	else{
-		cpySizeInt = strlen(text);
-		//printf("not greater than 80\n");
-	}
-	//printf("%d\n",cpySizeInt);
-	
+	else{text[80] = '\0';}
+
 	stuffed = text;
+
 	//printf("              not stuffed: %s\n",stuffme);
-	printf("destuffed: %s\n",text);
+	//printf("destuffed: %s\n",text);
+	stuffed = trim(stuffed);
+	printf("destuffed:%s\n",stuffed);
 	
 	return stuffed;
 	
 }
 
- 
+struct data deserialize(char * buffer){
+	char * cpyBuff = buffer;
+	//printf("cpy:%s\n",cpyBuff);
+	char * DLE;
+	char * SYN;
+	char * STX;
+	char * ETX;
+	int destAddr;
+	int sourceAddr;
+	char * text;
+	char * d;
+	char * s;
+	
+	struct data stuff;
+	
+	SYN = strtok(cpyBuff,"&");
+	SYN = strtok(NULL,"&");
+	DLE = strtok(NULL,"&");
+	STX = strtok(NULL,"&");
+	d = strtok(NULL,"&");
+	s = strtok(NULL,"&");
+	text = strtok(NULL,"&");
+	DLE = strtok(NULL,"&");
+	ETX = strtok(NULL,"&");
+	printf("deserialized text:%s\n",text);
+	printf("convert s and d");
+	sourceAddr = atoi(s);
+	destAddr = atoi(d);
+	printf("set to struct");
+	stuff.dest = destAddr;
+	stuff.source = sourceAddr;
+	stuff.text = destuff(text);
+	
+	return stuff;
+}

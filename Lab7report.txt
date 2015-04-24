@@ -1,0 +1,14 @@
+In this lab we learned about the Cisco Internetwork Operating System (IOS) and how to use it to configure a NAT firewall.
+The commands and interface are very similar to UNIX commands in the terminal.  There are 4 different modes you may be in when entering commmands to IOS.
+Each mode has a limited set of commands you may enter while in those modes and are used for configuring different parts of IOS.
+These modes are User EXEC mode which is only allowed to enter a limited number of commands and cannont read or modify configurations.
+Privileged EXEC mode can configure files and other things similar to a UNIX root user.  This mode requires a password.
+Global Configuration mode allows global system parameters to be modified.
+Interface Configuration mode allows sparameters in a specific interface to be modified.
+
+When we set up a computer inside a NAT and ping a computer outside the NAT, we can see that the router changes the IP address of the compute inside the NAT and masks to whatever we set it as.
+For instance, if you were to ping from a computer inside the NAT with the IP address 192.168.2.2 to a computer outside the NAT, the router will mask your IP address to something else like 4.8.9.24.
+The computer outside the NAT then things it is being pinged from and responding to a ping from a computer at 4.8.9.24.  The router then translates the destination of the packets it receives from the computer
+outside the NAT to be the IP of the computer inside the NAT.
+
+When we set the router to assign IP addresses using a DHCP and set our computer to get a new IP address, the IP address the computer receives is 192.168.2.4

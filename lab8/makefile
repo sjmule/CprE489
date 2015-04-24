@@ -1,6 +1,6 @@
 EXES = main
-OBJS = main.o Server.o Client.o stuff.o destuff.o
-DEPS = header.h
+OBJS = lab8.o introduceerror.o
+DEPS = introduceerror.h
 CFLAGS = -w
 
 main: $(OBJS)

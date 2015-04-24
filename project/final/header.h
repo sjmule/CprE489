@@ -17,15 +17,17 @@
 #include <errno.h>
 #include <string.h>
 #include <argp.h>
-#include <poll.h>
+#include <fcntl.h>
 
-extern char DLE;
+extern char DEL;
 extern char SYN;
 extern char STX;
 extern char ETX;
-extern int DEBUG;
 
 int Server(int), Client(int);
-char* stuff(char*), destuff(char*);
+char* stuff(char*);
+char* destuff(char*);
+struct data deserialize(char *);
+char* trim(char*);
 
 #endif

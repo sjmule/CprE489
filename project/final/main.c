@@ -1,9 +1,8 @@
 #include "header.h"
-
-char DLE = 'm';
-char SYN = 22;
-char STX = 2;
-char ETX = 3;
+char DLE = 'm';//16;
+char SYN = 's';//22;
+char STX = 'b';//2;
+char ETX = 'e';//3;
 int DEBUG;
 
 // program version string
@@ -84,10 +83,18 @@ error_t parse_opt(int key, char *arg, struct argp_state *state)
 // The arg parser object
 static struct argp argp = {&options, parse_opt, 0, doc};
 
+struct data
+{
+	int dest;
+	int source;
+	char* text;
+};
+
 int main(int argc, char** argv)
 {
 	// Define defaults for the parser
 	struct arguments arguments;
+	struct data data;
 	arguments.verbose_mode = 1;
 	arguments.server_port = 0;
 	arguments.client_port = 0;
@@ -96,7 +103,7 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	DEBUG = arguments.verbose_mode;
 
-	int server_fd, client_fd, n, er, destAddr, rv;
+	int server_fd, client_fd, er, destAddr, rv, stdin_flags, fd_flags;
 	int err = 0;
 	int check = 0;
     char i;
@@ -106,7 +113,6 @@ int main(int argc, char** argv)
 	char *text = NULL;
 	size_t *t = 0;
 	size_t size = 0;
-	struct pollfd fds[2];
 
 	// Verify the user has set a node id
 	if(arguments.node_id == -1)
@@ -163,95 +169,71 @@ int main(int argc, char** argv)
 		client_fd = Client(arguments.client_port);
 	}
 
-	// Set up stuff for pulling			Not Done
-	//fds[0].fd = stdin;
-	//fds[0].events = POLLIN | POLLPRI;
+	stdin_flags = fcntl(stdin, F_GETFL);
+	stdin_flags |= O_NONBLOCK;
+	fcntl(stdin, F_SETFL, stdin_flags);
 
-	//fds[1].fd = server_fd;
-	//fds[1].events = POLLIN | POLLPRI;
+	fd_flags = fcntl(server_fd, F_GETFL);
+	fd_flags |= O_NONBLOCK;
+	fcntl(server_fd, F_SETFL, fd_flags);
 
 	for(;;)
 	{
-		//rv = poll(fds, 2, -1);
-		// If we are the first server in the ring
-		if(arguments.node_id == 0)
+		int st = 0;
+		int fs = 0;
+		int n = 0;
+
+		printf("When ready to enter a message please type in the destination node address\n");
+
+		while(1)
 		{
-			/*printf("When ready to enter a message please type in the destination node address\n");
-
-        	i = fgetc(stdin);
-	        fgetc(stdin);
-	        destAddr = atoi(i);
-
-        	printf("When ready enter message of length 80 characters to send to node %c:", i);
-
-        	er = getline(&text, &size, stdin);
-
-        	textBuffer = stuff(text);
-
-			sprintf(buffer,"%c%c%c%d%d%d%s%c%c", SYN, SYN, DLE, STX, destAddr, arguments.node_id, textBuffer, DLE, ETX);
-			printf("%s\n",buffer);
-
-        	write(client_fd, buffer, er);*/
-
-
-			// Brian, I need code here
-			// 1) take destination id
-			// 2) take message
-			// 3) do magic
-			// 4) send magic
-
-
-			if(strncmp(text, "!!quit!!", 8) == 0)
+			if((n = read(stdin, buffer, 80)) < 1)
 			{
+				st = 1;
+				break;
+			}
+			if((n = read(server_fd, buffer, 90)) < 1)
+			{
+				fs = 1;
 				break;
 			}
 		}
-		//If we are a different server in the ring
-		else if((arguments.node_id > 0) && (arguments.node_id < (arguments.num_workstations-1)))
+
+		if(st = 1)
 		{
-			/*n = read(server_fd, buffer, 80);
-			textBuffer2 = destuff(buffer);
+			destAddr = atoi(buffer[0]);
+			stdin_flags = fcntl(stdin, F_GETFL);
+			stdin_flags |= ~O_NONBLOCK;
+			fcntl(stdin, F_SETFL, stdin_flags);
+			printf("When ready enter message of length 80 characters to send to node %d:",destAddr);
+			read(stdin, textBuffer, 80);
+			textBuffer = stuff(textBuffer);
+			sprintf(textBuffer2,"%c&%c&%c&%c&%d&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer,DLE, ETX);
 			printf("%s\n", textBuffer2);
-			write(client_fd, buffer, n);*/
-
-
-			// Brian, I need code here
-			// 1) decode magic
-			// 2) if destination id = arguments.node_id, print message
-			//    else do magic and send to next guy
-
-
-			if(strncmp(buffer, "!!quit!!", 8) == 0)
-			{
-				break;
-			}
-			memset(buffer, '\0', 80);
+			write(client_fd, textBuffer2, sizeof(textBuffer2));
+			stdin_flags = fcntl(stdin, F_GETFL);
+			stdin_flags |= O_NONBLOCK;
+			fcntl(stdin, F_SETFL, stdin_flags);
 		}
-		// If we are the last server in the ring
-		else if(arguments.node_id == (arguments.num_workstations-1))
+		if(fs = 1)
 		{
-			/*n = read(server_fd, buffer, 80);
-			textBuffer2 = destuff(buffer);
-			printf("%s\n", buffer);*/
-
-
-			// Brian, I need code here
-			// This is the last guy in the ring, but this will change
-
-
-			if(strncmp(buffer, "!!quit!!", 8) == 0)
+			data = deserialize(buffer);
+			if(data.dest == arguments.node_id)
 			{
-				break;
+				printf("Message from node %d:\n%s\n", data.dest, data.text);
 			}
-			memset(buffer, '\0', 80);
+			else
+			{
+				write(client_fd, buffer, n);
+			}
 		}
 
-		// End goal, all that other stuff in this loop goes away <-- I need sleep, that's a very odd word for me to understand right now
-		// 1) poll on stdin and server_fd for one of them to have info
-		// 2a) if stdin, read, package, send
-		// 2b) if server_fd, unpackage, check destination id, if ours, print, else package, send to next guy
-		// 3) repeat
-
+		memset(buffer, '\0', sizeof(buffer));
+		memset(textBuffer, '\0', sizeof(textBuffer));
+		memset(textBuffer2, '\0', sizeof(textBuffer2));
+		memset(data.text, '\0', sizeof(data.text));
+		data.dest = NULL;
+		data.source = NULL;
 	}
 
 	close(client_fd);
