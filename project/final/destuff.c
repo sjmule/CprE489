@@ -1,7 +1,7 @@
 #include "header.h"
 
 struct data{
-	int dest;
+	char dest;
 	int source;
 	char * text;
 };
@@ -47,35 +47,35 @@ char* destuff(char * destuffme){
 struct data deserialize(char * buffer){
 	char * cpyBuff = buffer;
 	//printf("cpy:%s\n",cpyBuff);
-	char * DLE;
-	char * SYN;
-	char * STX;
-	char * ETX;
-	int destAddr;
-	int sourceAddr;
-	char * text;
-	char * d;
-	char * s;
+	char * DL = "";
+	char * SY = "";
+	char * ST = "";
+	char * ET = "";
+	int destAddrs = 0;
+	int sourceAddrs = 0;
+	char * texts = "";
+	char * d = "";
+	char * s = "";
 	
 	struct data stuff;
 	
-	SYN = strtok(cpyBuff,"&");
-	SYN = strtok(NULL,"&");
-	DLE = strtok(NULL,"&");
-	STX = strtok(NULL,"&");
+	SY = strtok(cpyBuff,"&");
+	SY = strtok(NULL,"&");
+	DL = strtok(NULL,"&");
+	ST = strtok(NULL,"&");
 	d = strtok(NULL,"&");
 	s = strtok(NULL,"&");
-	text = strtok(NULL,"&");
-	DLE = strtok(NULL,"&");
-	ETX = strtok(NULL,"&");
-	printf("deserialized text:%s\n",text);
+	texts = strtok(NULL,"&");
+	DL = strtok(NULL,"&");
+	ET = strtok(NULL,"&");
+	printf("deserialized text:%s\n",texts);
 	printf("convert s and d");
-	sourceAddr = atoi(s);
-	destAddr = atoi(d);
+	sourceAddrs = atoi(s);
+	//destAddrs = d;
 	printf("set to struct");
-	stuff.dest = destAddr;
-	stuff.source = sourceAddr;
-	stuff.text = destuff(text);
+	stuff.dest = destAddrs;
+	stuff.source = sourceAddrs;
+	stuff.text = destuff(texts);
 	
 	return stuff;
 }

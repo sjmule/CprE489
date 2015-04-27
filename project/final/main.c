@@ -31,7 +31,7 @@ struct arguments
 	// are we in verbose mode?
 	int verbose_mode;
 	// the node id
-	int node_id;
+	char node_id;
 	// the server port address
 	int server_port;
 	// the client port address
@@ -85,7 +85,7 @@ static struct argp argp = {&options, parse_opt, 0, doc};
 
 struct data
 {
-	int dest;
+	char dest;
 	int source;
 	char* text;
 };
@@ -102,6 +102,8 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	DEBUG = arguments.verbose_mode;
 
+	int fdmax;//maximum file descriptor
+
 	struct data data;
 
 	fd_set rfds;
@@ -110,10 +112,11 @@ int main(int argc, char** argv)
 	int server_fd, client_fd, er, n, destAddr, rv, stdin_flags, fd_flags, retval;
 	int err = 0;
 	int check = 0;
-    char i, j;
-	char* buffer = malloc(90 * sizeof(char));
+    char j;
+    char* i = malloc(2 * sizeof(char));
+	char* buffer = malloc(100 * sizeof(char));
 	char* textBuffer = NULL;
-	char* textBuffer2 = NULL;
+	char* textBuffer2 = malloc(90 * sizeof(char));
 	char* text = NULL;
 	size_t* t = 0;
 	size_t size = 0;
@@ -175,31 +178,46 @@ int main(int argc, char** argv)
 
 	// Watch stdin and our socket
 	FD_ZERO(&rfds);
-	FD_SET(0, &rfds);
+	FD_SET(STDIN_FILENO, &rfds);
 	FD_SET(server_fd, &rfds);
+	fdmax = server_fd;
 
 	for(;;)
 	{
 		printf("When ready to enter a message please type in the destination node address\n");
 		
-		n = select(3, &rfds, NULL, NULL, NULL);
+		n = select(fdmax+1, &rfds, NULL, NULL, NULL);
+		printf("%d\n", n);
+
+		if((n == -1 ) && (errno == EINTR)) 
+		   continue;
+	  	if(n == -1)
+	  	{	
+	  		printf("Something broke\n");
+	  		exit(-1);
+	  	}
 
 		if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
-			i = fgetc(stdin);
+			printf("Standard In ready\n");
+			destAddr = fgetc(stdin);
+			printf("%c\n", destAddr);
 			j = fgetc(stdin);
-			destAddr = atoi(i);
-			printf("When ready enter message of length 80 characters to send to node %d:",destAddr);
-			read(stdin, textBuffer, 80);
+			printf("When ready enter message of length 80 characters to send to node :\n");
+			//read(stdin, textBuffer, 80);
+			getline(&textBuffer, &size, stdin);
+			printf("%s\n", textBuffer);
 			textBuffer = stuff(textBuffer);
-			sprintf(textBuffer2,"%c&%c&%c&%c&%d&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer,DLE, ETX);
+			sprintf(textBuffer2,"%c&%c&%c&%c&%c&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer,DLE, ETX);
 			printf("%s\n", textBuffer2);
 			write(client_fd, textBuffer2, sizeof(textBuffer2));
 		}
 		else if((n > 0 ) && (FD_ISSET(server_fd, &rfds)))
 		{
+			printf("Got some Socekt data\n");
 			data = deserialize(buffer);
-			if(data.dest == arguments.node_id)
+			char a = data.dest - '0';
+			if(a == arguments.node_id)
 			{
 				printf("Message from node %d:\n%s\n", data.dest, data.text);
 			}
@@ -209,7 +227,7 @@ int main(int argc, char** argv)
 			}
 		}
 
-		memset(buffer, '\0', 90);
+		memset(buffer, '\0', 100);
 		memset(textBuffer, '\0', sizeof(textBuffer));
 		memset(textBuffer2, '\0', sizeof(textBuffer2));
 		memset(data.text, '\0', sizeof(data.text));
