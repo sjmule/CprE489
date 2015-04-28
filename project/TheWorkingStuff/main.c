@@ -1,18 +1,24 @@
+/**
+ * A simple token ring program
+ * Authors: Scott Mueller and Brian Moran
+ */
+
 #include "header.h"
-char DLE = 'm';//16;
-char SYN = 's';//22;
-char STX = 'b';//2;
-char ETX = 'e';//3;
+
+char DLE = 16;
+char SYN = 22;
+char STX = 2;
+char ETX = 3;
 int DEBUG;
 
-// program version string
+// Program version string
 const char *argp_program_version = "Token Ring Client 1.0";
-// program bug address string
-const char *argp_program_bug_address = "Scott Mueller <scotm1@iastate.edu>";
-// program documentation string
+// Program bug address string
+const char *argp_program_bug_address = "Scott Mueller <scotm1@iastate.edu> | Brian Moran <bmoran@iastate.edu>";
+// Program documentation string
 static char doc[] = "Simple token ring workstation client";
 
-// list of options supported
+// List of options supported
 static struct argp_option options[] = 
 {
 	{"verbose", 'v', 0, 0, "Produce verbose output"},
@@ -25,7 +31,7 @@ static struct argp_option options[] =
 	{0}
 };
 
-//arugment structure to store the results of command line parsing
+// Arugment structure to store the results of command line parsing
 struct arguments
 {
 	// are we in verbose mode?
@@ -102,7 +108,8 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	DEBUG = arguments.verbose_mode;
 
-	int fdmax;//maximum file descriptor
+	// Maximum file descriptor
+	int fdmax;
 
 	struct data data;
 
@@ -188,6 +195,7 @@ int main(int argc, char** argv)
 		
 		printf("When ready to enter a message please type in the destination node address\n");
 		
+		// Wait for one of our file descriptors to be ready
 		n = select(fdmax+1, &rfds, NULL, NULL, NULL);
 
 		if((n == -1 ) && (errno == EINTR)) 
@@ -198,39 +206,39 @@ int main(int argc, char** argv)
 	  		exit(-1);
 	  	}
 
+	  	// Standard input has data ready to read
 		if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
-			//printf("Standard In ready\n");
+			// Get the destination node number
 			destAddr = fgetc(stdin);
 			j = fgetc(stdin);
 			printf("When ready enter message of length 80 characters to send to node %c:\n", destAddr);
+			// Get the user's message
 			getline(&textBuffer, &size, stdin);
+			// Ready the user's message
 			textBuffer2 = trim(textBuffer);
 			textBuffer3 = stuff(textBuffer2);
 			sprintf(textBuffer4,"%c&%c&%c&%c&%c&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer3,DLE, ETX);
-			printf("%d\n", strlen(textBuffer4));
+			// Send the user's message
 			write(client_fd, textBuffer4, strlen(textBuffer4));
 		}
+		// The socket has data to be read
 		else if((n > 0 ) && (FD_ISSET(server_fd, &rfds)))
 		{
-			//printf("Got some Socket data\n");
+			// Get the socket data
 			n = read(server_fd, buffer, 90);
 			strcpy(buffer2, buffer);
-			//printf("buff1: %s\n", buffer);
-			//printf("buff2: %s\n", buffer2);
+			// Decipher the socket data
 			data = deserialize(buffer);
-			//printf("deserialized: %s\n", data.text);
-			//printf("Source: %d\n", data.source);
-			//printf("The destination char: %c\n", data.dest);
 			int a = data.dest - '0';
-			//printf("The destination int: %d\n", a);
+			// If the message is for us, print it
 			if(a == arguments.node_id)
 			{
 				printf("Message from node %d: %s\n", data.source, data.text);
 			}
+			// Otherwise send it to the next guy
 			else
 			{
-				//printf("Sending to 2: %s\n", buffer2);
 				write(client_fd, buffer2, strlen(buffer2));
 			}
 		}

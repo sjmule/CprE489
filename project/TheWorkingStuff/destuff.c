@@ -1,3 +1,8 @@
+/**
+ * Brian put something here
+ * Author: Brian Moran
+ */
+
 #include "header.h"
 
 struct data{
@@ -9,16 +14,14 @@ struct data{
 char* destuff(char * destuffme){
 	char * stuffed = NULL;
 	char text[150];
-	char DLE = 'm';//change for tesing but should be dle = 16
-	int h = 0;//for testing purposes
+	char DLE = 16;
+	int h = 0;
 	int currentLoc = 0;
 	int destuffmeLoc = 0;
 	int cpySizeInt;
 	
-	//takes in the text stuffs it then cuts it down to 72 characters
-	//printf("start of while loop h)%d\n",h);h++;
-	while(destuffme[destuffmeLoc] != '\0' || currentLoc == 80){//chaneg to a end delimiter
-		//printf("appending single chars h)%d\n",h);h++;
+	// Takes in the text stuffs it then cuts it down to 72 characters
+	while(destuffme[destuffmeLoc] != '\0' || currentLoc == 80){ //Change to a end delimiter
 		text[currentLoc] = destuffme[destuffmeLoc];
 		
 		if(destuffme[destuffmeLoc]==DLE){
@@ -35,18 +38,14 @@ char* destuff(char * destuffme){
 
 	stuffed = text;
 
-	//printf("              not stuffed: %s\n",stuffme);
-	//printf("destuffed: %s\n",text);
 	stuffed = trim(stuffed);
-	printf("destuffed:%s\n",stuffed);
-	
+
 	return stuffed;
 	
 }
 
 struct data deserialize(char * buffer){
 	char * cpyBuff = buffer;
-	//printf("cpy:%s\n",cpyBuff);
 	char DL;
 	char SY;
 	char ST;
@@ -69,11 +68,10 @@ struct data deserialize(char * buffer){
 	texts = strtok(NULL,"&");
 	DL = strtok(NULL,"&");
 	ET = strtok(NULL,"&");
-	//printf("deserialized text:%s\n",texts);
-	//printf("convert s: %s and d: %s\n", s, d);
+
 	sourceAddrs = atoi(s);
-	//destAddrs = d;
-	printf("set to struct\n");
+
+	printf("\n"); // This line is litterally magic
 	stuff.dest = d[0];
 	stuff.source = sourceAddrs;
 

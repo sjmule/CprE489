@@ -1,3 +1,15 @@
+/*****************************************************************************/
+/*                                                                           */
+/* This routine establishes a passive open connection.  That is, it creates  */
+/* a socket, and passively wait for a connection.  Once a connection request */
+/* has been received, it echoes "connected" on the screen, and return        */
+/* a file descriptor to be used to communicate with the remote machine.      */
+/* Make sure that you change the machine name from "vulcan" to that you    	 */
+/* will be running your process on. Also, change the port number to          */
+/* a suitable port number as indicated in the project writeup.               */
+/*                                                                           */
+/*****************************************************************************/
+
 #include "header.h"
 
 int Server(int port)
