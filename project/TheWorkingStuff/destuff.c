@@ -54,6 +54,7 @@ struct data deserialize(char * buffer){
 	int destAddrs = 0;
 	int sourceAddrs = 0;
 	char * texts = "";
+	char * texts2 = "";
 	char * d = NULL;
 	char * s = NULL;
 	
@@ -68,14 +69,16 @@ struct data deserialize(char * buffer){
 	texts = strtok(NULL,"&");
 	DL = strtok(NULL,"&");
 	ET = strtok(NULL,"&");
-	printf("deserialized text:%s\n",texts);
-	printf("convert s: %s and d: %s\n", s, d);
+	//printf("deserialized text:%s\n",texts);
+	//printf("convert s: %s and d: %s\n", s, d);
 	sourceAddrs = atoi(s);
 	//destAddrs = d;
 	printf("set to struct\n");
 	stuff.dest = d[0];
 	stuff.source = sourceAddrs;
-	stuff.text = destuff(texts);
+
+	texts2 = destuff(texts);
+	stuff.text = texts;
 	
 	return stuff;
 }

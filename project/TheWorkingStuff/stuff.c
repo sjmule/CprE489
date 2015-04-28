@@ -37,10 +37,10 @@ char* stuff(char * stuffme){
 		cpySizeInt = strlen(text);
 		//printf("not greater than 80\n");
 	}
-	printf("currentLoc: %d\n",currentLoc);//cpySizeInt
+	//printf("currentLoc: %d\n",currentLoc);//cpySizeInt
 	
 	stuffed = text;
-	printf("stuffed: %s\n", stuffed);
+	//printf("stuffed: %s\n", stuffed);
 	
 	//printf("              not stuffed: %s\n",stuffme);
 	//printf("                  stuffed: %s\n",text);

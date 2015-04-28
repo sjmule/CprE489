@@ -5,10 +5,10 @@
 
 #include "header.h"
 
-char DLE = 16;//16;
-char SYN = 22;//22;
-char STX = 2;//2;
-char ETX = 3;//3;
+char DLE = 'm';//16;
+char SYN = 's';//22;
+char STX = 'b';//2;
+char ETX = 'e';//3;
 int DEBUG;
 
 // Program version string
@@ -37,7 +37,7 @@ struct arguments
 	// are we in verbose mode?
 	int verbose_mode;
 	// the node id
-	char node_id;
+	int node_id;
 	// the server port address
 	int server_port;
 	// the client port address
@@ -109,11 +109,14 @@ int main(int argc, char** argv)
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 	DEBUG = arguments.verbose_mode;
 
+	int fdmax;//maximum file descriptor
+
 	struct data data;
 
 	fd_set rfds;
+	struct timeval tv;
 
-	int server_fd, client_fd, er, n, destAddr, rv, stdin_flags, fd_flags, retval, fdmax;
+	int server_fd, client_fd, er, n, destAddr, rv, stdin_flags, fd_flags, retval;
 	int err = 0;
 	int check = 0;
     char j;

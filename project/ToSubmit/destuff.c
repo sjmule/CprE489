@@ -1,5 +1,5 @@
 /**
- * Brain, put a description here
+ * A function which destuffs the message sent on the network.
  * Author: Brian Moran
  */
 
@@ -14,16 +14,14 @@ struct data{
 char* destuff(char * destuffme){
 	char * stuffed = NULL;
 	char text[150];
-	char DLE = 16;//change for tesing but should be dle = 16
+	char DLE = 'm';//change for tesing but should be dle = 16
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
 	int destuffmeLoc = 0;
 	int cpySizeInt;
 	
 	//takes in the text stuffs it then cuts it down to 72 characters
-	//printf("start of while loop h)%d\n",h);h++;
 	while(destuffme[destuffmeLoc] != '\0' || currentLoc == 80){//chaneg to a end delimiter
-		//printf("appending single chars h)%d\n",h);h++;
 		text[currentLoc] = destuffme[destuffmeLoc];
 		
 		if(destuffme[destuffmeLoc]==DLE){
@@ -40,18 +38,14 @@ char* destuff(char * destuffme){
 
 	stuffed = text;
 
-	//printf("              not stuffed: %s\n",stuffme);
-	//printf("destuffed: %s\n",text);
 	stuffed = trim(stuffed);
-	//printf("destuffed:%s\n",stuffed);
-	
+
 	return stuffed;
 	
 }
 
 struct data deserialize(char * buffer){
 	char * cpyBuff = buffer;
-	//printf("cpy:%s\n",cpyBuff);
 	char DL;
 	char SY;
 	char ST;
@@ -73,11 +67,9 @@ struct data deserialize(char * buffer){
 	texts = strtok(NULL,"&");
 	DL = strtok(NULL,"&");
 	ET = strtok(NULL,"&");
-	//printf("deserialized text:%s\n",texts);
-	//printf("convert s: %s and d: %s\n", s, d);
-	sourceAddrs = atoi(s);
-	//destAddrs = d;
-	//printf("set to struct\n");
+
+	sourceAddrs = s[0];
+
 	stuff.dest = d[0];
 	stuff.source = sourceAddrs;
 	stuff.text = destuff(texts);

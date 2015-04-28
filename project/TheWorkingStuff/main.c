@@ -200,7 +200,7 @@ int main(int argc, char** argv)
 
 		if(FD_ISSET(STDIN_FILENO, &rfds))
 		{
-			printf("Standard In ready\n");
+			//printf("Standard In ready\n");
 			destAddr = fgetc(stdin);
 			j = fgetc(stdin);
 			printf("When ready enter message of length 80 characters to send to node %c:\n", destAddr);
@@ -213,24 +213,24 @@ int main(int argc, char** argv)
 		}
 		else if((n > 0 ) && (FD_ISSET(server_fd, &rfds)))
 		{
-			printf("Got some Socket data\n");
+			//printf("Got some Socket data\n");
 			n = read(server_fd, buffer, 90);
 			strcpy(buffer2, buffer);
-			printf("buff1: %s\n", buffer);
-			printf("buff2: %s\n", buffer2);
+			//printf("buff1: %s\n", buffer);
+			//printf("buff2: %s\n", buffer2);
 			data = deserialize(buffer);
-			printf("deserialized: %s\n", data.text);
-			printf("Source: %d\n", data.source);
-			printf("The destination char: %c\n", data.dest);
+			//printf("deserialized: %s\n", data.text);
+			//printf("Source: %d\n", data.source);
+			//printf("The destination char: %c\n", data.dest);
 			int a = data.dest - '0';
-			printf("The destination int: %d\n", a);
+			//printf("The destination int: %d\n", a);
 			if(a == arguments.node_id)
 			{
-				printf("Message from node %d:%s\n", a, data.text);
+				printf("Message from node %d: %s\n", data.source, data.text);
 			}
 			else
 			{
-				printf("Sending to 2: %s\n", buffer2);
+				//printf("Sending to 2: %s\n", buffer2);
 				write(client_fd, buffer2, strlen(buffer2));
 			}
 		}
