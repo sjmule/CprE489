@@ -2,8 +2,8 @@
 
 char* stuff(char * stuffme){
 	char * stuffed = NULL;
-	char * stuffedDone = malloc(sizeof(char)*100);
-	char text[150] = "";
+	char * stuffedDone = malloc(sizeof(char)*127);
+	char * text = malloc(127 * sizeof(char));
 	char DLE = 'm';//change for tesing but should be dle = 16 
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
@@ -26,6 +26,8 @@ char* stuff(char * stuffme){
 		stuffmeLoc++;
 		currentLoc++;
 	}
+
+	text[currentLoc] = '\0';
 	
 	if(currentLoc >= 80){
 		cpySizeInt = 80;
@@ -37,14 +39,14 @@ char* stuff(char * stuffme){
 	}
 	printf("currentLoc: %d\n",currentLoc);//cpySizeInt
 	
-	stuffed = trim(text);
-	strncpy(stuffedDone, stuffed, strlen(stuffed));
+	stuffed = text;
+	printf("stuffed: %s\n", stuffed);
 	
-	printf("              not stuffed: %s\n",stuffme);
-	printf("                  stuffed: %s\n",text);
-	printf("stuffed and 80 characters at most: %s\n",stuffedDone);
+	//printf("              not stuffed: %s\n",stuffme);
+	//printf("                  stuffed: %s\n",text);
+	//printf("stuffed and 80 characters at most: %s\n",stuffedDone);
 	
-	return trim(stuffedDone);
+	return stuffed;
 	
 }
 

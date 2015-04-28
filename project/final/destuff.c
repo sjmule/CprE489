@@ -47,15 +47,15 @@ char* destuff(char * destuffme){
 struct data deserialize(char * buffer){
 	char * cpyBuff = buffer;
 	//printf("cpy:%s\n",cpyBuff);
-	char * DL = "";
-	char * SY = "";
-	char * ST = "";
-	char * ET = "";
+	char DL;
+	char SY;
+	char ST;
+	char ET;
 	int destAddrs = 0;
 	int sourceAddrs = 0;
 	char * texts = "";
-	char * d = "";
-	char * s = "";
+	char * d = NULL;
+	char * s = NULL;
 	
 	struct data stuff;
 	
@@ -69,11 +69,11 @@ struct data deserialize(char * buffer){
 	DL = strtok(NULL,"&");
 	ET = strtok(NULL,"&");
 	printf("deserialized text:%s\n",texts);
-	printf("convert s and d");
+	printf("convert s: %s and d: %s\n", s, d);
 	sourceAddrs = atoi(s);
 	//destAddrs = d;
-	printf("set to struct");
-	stuff.dest = destAddrs;
+	printf("set to struct\n");
+	stuff.dest = d[0];
 	stuff.source = sourceAddrs;
 	stuff.text = destuff(texts);
 	

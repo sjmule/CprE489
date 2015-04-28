@@ -113,10 +113,12 @@ int main(int argc, char** argv)
 	int err = 0;
 	int check = 0;
     char j;
-    char* i = malloc(2 * sizeof(char));
-	char* buffer = malloc(100 * sizeof(char));
-	char* textBuffer = NULL;
-	char* textBuffer2 = malloc(90 * sizeof(char));
+	char* buffer = malloc(127 * sizeof(char));
+	char* buffer2 = malloc(127 * sizeof(char));
+	char* textBuffer = malloc(127 * sizeof(char));
+	char* textBuffer2 = malloc(127 * sizeof(char));
+	char* textBuffer3 = malloc(127 * sizeof(char));
+	char* textBuffer4 = malloc(127 * sizeof(char));
 	char* text = NULL;
 	size_t* t = 0;
 	size_t size = 0;
@@ -176,18 +178,18 @@ int main(int argc, char** argv)
 		client_fd = Client(arguments.client_port);
 	}
 
-	// Watch stdin and our socket
-	FD_ZERO(&rfds);
-	FD_SET(STDIN_FILENO, &rfds);
-	FD_SET(server_fd, &rfds);
-	fdmax = server_fd;
-
 	for(;;)
 	{
+		// Watch stdin and our socket
+		FD_ZERO(&rfds);
+		FD_SET(STDIN_FILENO, &rfds);
+		FD_SET(server_fd, &rfds);
+		fdmax = server_fd;
+		
 		printf("When ready to enter a message please type in the destination node address\n");
 		
 		n = select(fdmax+1, &rfds, NULL, NULL, NULL);
-		printf("%d\n", n);
+		//printf("%d\n", n);
 
 		if((n == -1 ) && (errno == EINTR)) 
 		   continue;
@@ -201,38 +203,50 @@ int main(int argc, char** argv)
 		{
 			printf("Standard In ready\n");
 			destAddr = fgetc(stdin);
-			printf("%c\n", destAddr);
+			//printf("%c\n", destAddr);
 			j = fgetc(stdin);
-			printf("When ready enter message of length 80 characters to send to node :\n");
-			//read(stdin, textBuffer, 80);
+			printf("When ready enter message of length 80 characters to send to node %c:\n", destAddr);
 			getline(&textBuffer, &size, stdin);
-			printf("%s\n", textBuffer);
-			textBuffer = stuff(textBuffer);
-			sprintf(textBuffer2,"%c&%c&%c&%c&%c&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer,DLE, ETX);
-			printf("%s\n", textBuffer2);
-			write(client_fd, textBuffer2, sizeof(textBuffer2));
+			//printf("1: %s\n", textBuffer);
+			textBuffer2 = trim(textBuffer);
+			//printf("2: %s\n", textBuffer2);
+			textBuffer3 = stuff(textBuffer2);
+			//printf("3: %s\n", textBuffer3);
+			sprintf(textBuffer4,"%c&%c&%c&%c&%c&%d&%s&%c&%c&", SYN,SYN,DLE,STX,destAddr,arguments.node_id, textBuffer3,DLE, ETX);
+			//printf("4: %s\n", textBuffer4);
+			printf("%d\n", strlen(textBuffer4));
+			write(client_fd, textBuffer4, strlen(textBuffer4));
 		}
 		else if((n > 0 ) && (FD_ISSET(server_fd, &rfds)))
 		{
-			printf("Got some Socekt data\n");
+			printf("Got some Socket data\n");
+			n = read(server_fd, buffer, 90);
+			strcpy(buffer2, buffer);
+			printf("buff1: %s\n", buffer);
+			printf("buff2: %s\n", buffer2);
 			data = deserialize(buffer);
-			char a = data.dest - '0';
+			printf("deserialized: %s\n", data.text);
+			printf("Source: %d\n", data.source);
+			printf("The destination char: %c\n", data.dest);
+			int a = data.dest - '0';
+			printf("The destination int: %d\n", a);
 			if(a == arguments.node_id)
 			{
-				printf("Message from node %d:\n%s\n", data.dest, data.text);
+				printf("Message from node %d:%s\n", a, data.text);
 			}
 			else
 			{
-				write(client_fd, buffer, n);
+				printf("Sending to 2: %s\n", buffer2);
+				write(client_fd, buffer2, strlen(buffer2));
 			}
 		}
 
-		memset(buffer, '\0', 100);
+		memset(buffer, '\0', 127);
+		memset(buffer2, '\0', 127);
 		memset(textBuffer, '\0', sizeof(textBuffer));
 		memset(textBuffer2, '\0', sizeof(textBuffer2));
-		memset(data.text, '\0', sizeof(data.text));
-		data.dest = NULL;
-		data.source = NULL;
+		//printf("sizeof:%d\n",sizeof(data.text));
+		memset(&data, 0, sizeof(data));
 	}
 
 	close(client_fd);
