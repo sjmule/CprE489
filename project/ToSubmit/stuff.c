@@ -9,7 +9,7 @@ char* stuff(char * stuffme){
 	char * stuffed = NULL;
 	char * stuffedDone = malloc(sizeof(char)*127);
 	char * text = malloc(127 * sizeof(char));
-	char DLE = '16';//change for tesing but should be dle = 16 
+	char DLE = 16;//change for tesing but should be dle = 16 
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
 	int stuffmeLoc = 0;

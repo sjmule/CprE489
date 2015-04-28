@@ -14,7 +14,7 @@ struct data{
 char* destuff(char * destuffme){
 	char * stuffed = NULL;
 	char text[150];
-	char DLE = '16';//change for tesing but should be dle = 16
+	char DLE = 16;//change for tesing but should be dle = 16
 	int h = 0;//for testing purposes
 	int currentLoc = 0;
 	int destuffmeLoc = 0;
@@ -43,7 +43,7 @@ char* destuff(char * destuffme){
 	//printf("              not stuffed: %s\n",stuffme);
 	//printf("destuffed: %s\n",text);
 	stuffed = trim(stuffed);
-	printf("destuffed:%s\n",stuffed);
+	//printf("destuffed:%s\n",stuffed);
 	
 	return stuffed;
 	
@@ -73,11 +73,11 @@ struct data deserialize(char * buffer){
 	texts = strtok(NULL,"&");
 	DL = strtok(NULL,"&");
 	ET = strtok(NULL,"&");
-	printf("deserialized text:%s\n",texts);
-	printf("convert s: %s and d: %s\n", s, d);
+	//printf("deserialized text:%s\n",texts);
+	//printf("convert s: %s and d: %s\n", s, d);
 	sourceAddrs = atoi(s);
 	//destAddrs = d;
-	printf("set to struct\n");
+	//printf("set to struct\n");
 	stuff.dest = d[0];
 	stuff.source = sourceAddrs;
 	stuff.text = destuff(texts);

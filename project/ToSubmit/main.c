@@ -5,10 +5,10 @@
 
 #include "header.h"
 
-char DLE = '16';//16;
-char SYN = '22';//22;
-char STX = '2';//2;
-char ETX = '3';//3;
+char DLE = 16;//16;
+char SYN = 22;//22;
+char STX = 2;//2;
+char ETX = 3;//3;
 int DEBUG;
 
 // Program version string
